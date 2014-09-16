@@ -23,8 +23,14 @@ rtcPeerConnection.getStats(function(result) {
 
 (function () {
     RTCPeerConnection = window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
-    window.getStats = RTCPeerConnection.prototype.getStats = function (callback, interval) {
+    window.getStats = function (callback, interval) {
         var peer = this;
+        
+        if(arguments[0] instanceof RTCPeerConnection) {
+            peer = arguments[0];
+            callback = arguments[1];
+            interval = arguments[2];
+        }
         
         var globalObject = {
             audio: {},

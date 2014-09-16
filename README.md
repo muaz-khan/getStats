@@ -20,24 +20,51 @@ To use it:
 <script src="//cdn.webrtc-experiment.com/getStats.js"></script>
 ```
 
-## First Step
+## window.getStats
+
+To invoke directly:
+
+```javascript
+getStats(peer, callback, interval);
+```
+
+## RTCPeerConnection.prototype.getPeerStats
+
+Or, to setup an instance method:
 
 ```javascript
 // if your code is encapsulated under a method
 (function() {
-    RTCPeerConnection.prototype.getStats = window.getStats;
+    RTCPeerConnection.prototype.getPeerStats = window.getStats;
+    
+    // or
+    RTCPeerConnection.prototype.__getStats = window.getStats;
+    
+    // or
+    RTCPeerConnection.prototype.getConnectionStats = window.getStats;
+    
+    // or
+    RTCPeerConnection.prototype['your-choice'] = window.getStats;
 })();
-
-// otherwise skip first step
 ```
 
-## Last Step
+**NEVER set/override `RTCPeerConnection.prototype.getStats`** because it is a reserved method.
+
+```javascript
+// following will fail
+RTCPeerConnection.prototype.getStats = window.getStats;
+
+// it should be
+RTCPeerConnection.prototype.intanceMethodNamae = window.getStats;
+```
+
+## Usage
 
 ```javascript
 var rtcPeerConnection = new RTCPeerConnection(iceServers);
 
 var repeatInterval = 2000; // 2000 ms == 2 seconds
-rtcPeerConnection.getStats(function(result) {
+rtcPeerConnection.getPeerStats(function(result) {
     result.connectionType.remote.ipAddress
     result.connectionType.remote.candidateType
     result.connectionType.transport

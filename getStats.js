@@ -23,15 +23,16 @@ rtcPeerConnection.getStats(function(result) {
 
 (function () {
     RTCPeerConnection = window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
-    window.getStats = function (callback, interval) {
+    window.getStats = function (mediaStreamTrack, callback, interval) {
         var peer = this;
-        
+
         if(arguments[0] instanceof RTCPeerConnection) {
-            peer = arguments[0];
-            callback = arguments[1];
-            interval = arguments[2];
+            peer             = arguments[0];
+            mediaStreamTrack = arguments[1];
+            callback         = arguments[2];
+            interval         = arguments[3];
         }
-        
+
         var globalObject = {
             audio: {},
             video: {}
@@ -119,7 +120,7 @@ rtcPeerConnection.getStats(function(result) {
                             googTransmitBitrate: res.googTransmitBitrate
                         };
                     }
-                    
+
                     // res.googActiveConnection means either STUN or TURN is used.
 
                     if (res.type == 'googCandidatePair' && res.googActiveConnection == 'true') {
@@ -150,9 +151,10 @@ rtcPeerConnection.getStats(function(result) {
         // following code-snippet is taken from somewhere on the github
         function _getStats(cb) {
             // if !peer or peer.signalingState == 'closed' then return;
-            
+
             if (!!navigator.mozGetUserMedia) {
                 peer.getStats(
+                    mediaStreamTrack,
                     function (res) {
                         var items = [];
                         res.forEach(function (result) {
@@ -180,7 +182,7 @@ rtcPeerConnection.getStats(function(result) {
             }
         };
     }
-    
+
     function merge(mergein, mergeto) {
         if (!mergein) mergein = {};
         if (!mergeto) return mergein;

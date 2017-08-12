@@ -44,10 +44,11 @@ module.exports = function(grunt) {
                     'dev/googCertificate.js',
                     'dev/googCodecName.audio.js',
                     'dev/googCodecName.video.js',
-                    'dev/VideoBwe.js',
+                    'dev/bweforvideo.js',
                     'dev/googCandidatePair.js',
                     'dev/localcandidate.js',
                     'dev/remotecandidate.js',
+                    'dev/dataSentReceived.js',
                     'dev/tail.js'
                 ],
                 dest: 'getStats.js',

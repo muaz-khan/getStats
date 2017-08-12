@@ -120,7 +120,7 @@
         
         <div class="grid">
                 <div class="videos-container">
-                    <video id="peer2-to-peer1" autoplay controls></video>
+                    <video id="peer2-to-peer1" controls></video>
                      <h2>Offerer-to-Answerer</h2>
                      <p><b>EncryptedAs:</b> <span id="peer1-encryptedAs"></span></p>
                      <p><b>Local ICE type:</b> <span id="peer1-localIceType"></span></p>
@@ -140,13 +140,13 @@
                      <p><b>Video Recv bandwidth:</b> <span id="peer1-videoAvailableBandwidthForReceivers"></span> kbps</p>
                      <p><b>Video Send resolutions:</b> <span id="peer1-videoResolutionsForSenders"></span></p>
                      <p><b>Video Recv resolutions:</b> <span id="peer1-videoResolutionsForReceivers"></span></p>
-                     <p><b>Audio Send tracks:</b> <span id="peer1-audioTracksForSenders"></span></p>
-                     <p><b>Audio Recv tracks:</b> <span id="peer1-audioTracksForReceivers"></span></p>
-                     <p><b>Video Send tracks:</b> <span id="peer1-videoTracksForSenders"></span></p>
-                     <p><b>Video Recv tracks:</b> <span id="peer1-videoTracksForReceivers"></span></p>
+                     <p><b>Send tracks:</b> <span id="peer1-audioVideoTracksForSenders"></span></p>
+                     <p><b>Recv tracks:</b> <span id="peer1-audioVideoTracksForReceivers"></span></p>
+                     <p><b>Total Data Sent:</b> <span id="peer1-totalDataForSenders"></span></p>
+                     <p><b>Total Data Recv:</b> <span id="peer1-totalDataForReceivers"></span></p>
                 </div>
                 <div class="videos-container">
-                    <video id="peer1-to-peer2" autoplay controls></video>
+                    <video id="peer1-to-peer2" controls></video>
                      <h2>Answerer-to-Offerer</h2>
                      <p><b>EncryptedAs:</b> <span id="peer2-encryptedAs"></span></p>
                      <p><b>Local ICE type:</b> <span id="peer2-localIceType"></span></p>
@@ -166,33 +166,18 @@
                      <p><b>Video Recv bandwidth:</b> <span id="peer2-videoAvailableBandwidthForReceivers"></span> kbps</p>
                      <p><b>Video Send resolutions:</b> <span id="peer2-videoResolutionsForSenders"></span></p>
                      <p><b>Video Recv resolutions:</b> <span id="peer2-videoResolutionsForReceivers"></span></p>
-                     <p><b>Audio Send tracks:</b> <span id="peer2-audioTracksForSenders"></span></p>
-                     <p><b>Audio Recv tracks:</b> <span id="peer2-audioTracksForReceivers"></span></p>
-                     <p><b>Video Send tracks:</b> <span id="peer2-videoTracksForSenders"></span></p>
-                     <p><b>Video Recv tracks:</b> <span id="peer2-videoTracksForReceivers"></span></p>
+                     <p><b>Send tracks:</b> <span id="peer2-audioVideoTracksForSenders"></span></p>
+                     <p><b>Recv tracks:</b> <span id="peer2-audioVideoTracksForReceivers"></span></p>
+                     <p><b>Total Data Sent:</b> <span id="peer2-totalDataForSenders"></span></p>
+                     <p><b>Total Data Recv:</b> <span id="peer2-totalDataForReceivers"></span></p>
                 </div>
             </div>
-            <script>
-                 var mediaConstraints = {
-                    optional: [],
-                    mandatory: {
-                        OfferToReceiveAudio: true,
-                        OfferToReceiveVideo: true
-                    }
-                };
-            </script>
             <script>
                 var offerer, answerer;
                 var offererToAnswerer = document.getElementById('peer1-to-peer2');
                 var answererToOfferer = document.getElementById('peer2-to-peer1');
 
-                window.RTCPeerConnection = window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-                window.RTCSessionDescription = window.mozRTCSessionDescription || window.RTCSessionDescription;
-                window.RTCIceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate;
-
                 var iceServers = [];
-
-                // Firefox <= 37 doesn't understands "urls"
 
                 iceServers.push({
                     urls: 'stun:stun.l.google.com:19302'
@@ -201,20 +186,40 @@
                 iceServers = {
                     iceServers: iceServers
                 };
+
+                var mediaConstraints = {
+                    OfferToReceiveAudio: true,
+                    OfferToReceiveVideo: true
+                };
             </script>
             <script>
                 /* offerer */
 
                 function offererPeer(video_stream) {
-                    offerer = new RTCPeerConnection(window.iceServers);
+                    offerer = new RTCPeerConnection(iceServers);
                     offerer.id = 1;
-                    offerer.addStream(video_stream);
 
-                    offerer.onaddstream = function (event) {
-                        offererToAnswerer.srcObject = event.stream;
-                        offererToAnswerer.play();
+                    video_stream.getTracks().forEach(function(track) {
+                        offerer.addTrack(track, video_stream);
+                    });
 
-                        invokeGetStats(offerer);
+                    var firedOnce = false;
+                    offerer.ontrack = function (event) {
+                        if(firedOnce) return;
+                        firedOnce = true;
+
+                        offererToAnswerer.srcObject = event.streams[0];
+
+                        if (typeof window.InstallTrigger !== 'undefined') {
+                            getStats(offerer, event.streams[0].getTracks()[0], function(result) {
+                                invokeGetStats(offerer, result);
+                            }, 1000);
+                        }
+                        else {
+                            getStats(offerer, function(result) {
+                                invokeGetStats(offerer, result);
+                            }, 1000);
+                        }
                     };
 
                     offerer.onicecandidate = function (event) {
@@ -222,25 +227,41 @@
                         answerer.addIceCandidate(event.candidate);
                     };
 
-                    offerer.createOffer(function (offer) {
-                        offerer.setLocalDescription(offer);
-                        answererPeer(offer, video_stream);
-                    }, function() {}, mediaConstraints);
+                    offerer.createOffer(mediaConstraints).then(function (offer) {
+                        offerer.setLocalDescription(offer).then(function() {
+                            answererPeer(offer, video_stream);
+                        }, function() {});
+                    }, function() {});
                 }
             </script>
             <script>
                 /* answerer */
 
                 function answererPeer(offer, video_stream) {
-                    answerer = new RTCPeerConnection(window.iceServers);
+                    answerer = new RTCPeerConnection(iceServers);
                     answerer.id = 2;
-                    answerer.addStream(video_stream);
+                    
+                    video_stream.getTracks().forEach(function(track) {
+                        answerer.addTrack(track, video_stream);
+                    });
 
-                    answerer.onaddstream = function (event) {
-                        answererToOfferer.srcObject = event.stream;
-                        answererToOfferer.play();
+                    var firedOnce = false;
+                    answerer.ontrack = function (event) {
+                        if(firedOnce) return;
+                        firedOnce = true;
 
-                        invokeGetStats(answerer);
+                        answererToOfferer.srcObject = event.streams[0];
+                        
+                        if (typeof window.InstallTrigger !== 'undefined') {
+                            getStats(answerer, event.streams[0].getTracks()[0], function(result) {
+                                invokeGetStats(answerer, result);
+                            }, 1000);
+                        }
+                        else {
+                            getStats(answerer, function(result) {
+                                invokeGetStats(answerer, result);
+                            }, 1000);
+                        }
                     };
 
                     answerer.onicecandidate = function (event) {
@@ -249,10 +270,11 @@
                     };
 
                     answerer.setRemoteDescription(offer);
-                    answerer.createAnswer(function (answer) {
-                        answerer.setLocalDescription(answer);
-                        offerer.setRemoteDescription(answer);
-                    }, function() {}, mediaConstraints);
+                    answerer.createAnswer(mediaConstraints).then(function (answer) {
+                        answerer.setLocalDescription(answer).then(function() {
+                            offerer.setRemoteDescription(answer);
+                        }, function() {});                        
+                    }, function() {});
                 }
             </script>
             <script>
@@ -293,8 +315,7 @@
                         });
                     }
                 };
-                function invokeGetStats(peer) {
-                    getStats(peer, function(result) {
+                function invokeGetStats(peer, result) {
                         if(STOP_GETSTATS) {
                             result.nomore();
                             return;
@@ -362,17 +383,27 @@
                             document.getElementById('peer' + peer.id + '-videoResolutionsForReceivers').innerHTML = result.resolutions.recv.width + 'x' + result.resolutions.recv.height;
                         }
 
-                        document.getElementById('peer' + peer.id + '-audioTracksForSenders').innerHTML = result.audio.send.tracks.length + ': ' + result.audio.send.tracks.join(', ');
-                        document.getElementById('peer' + peer.id + '-audioTracksForReceivers').innerHTML = result.audio.recv.tracks.length + ': ' + result.audio.recv.tracks.join(', ');
-                        document.getElementById('peer' + peer.id + '-videoTracksForSenders').innerHTML = result.video.send.tracks.length + ': ' + result.video.send.tracks.join(', ');
-                        document.getElementById('peer' + peer.id + '-videoTracksForReceivers').innerHTML = result.video.recv.tracks.length + ': ' + result.video.recv.tracks.join(', ');
+                        document.getElementById('peer' + peer.id + '-audioVideoTracksForSenders').innerHTML = result.audio.send.tracks.length + result.video.send.tracks.length;
+                        document.getElementById('peer' + peer.id + '-audioVideoTracksForReceivers').innerHTML = result.audio.recv.tracks.length + result.video.recv.tracks.length;
 
-                        if (result.datachannel && result.datachannel.state === 'close') {
+                        document.getElementById('peer' + peer.id + '-totalDataForSenders').innerHTML = bytesToSize(result.audio.bytesSent + result.video.bytesSent);
+                        document.getElementById('peer' + peer.id + '-totalDataForReceivers').innerHTML = bytesToSize(result.audio.bytesReceived + result.video.bytesReceived);
+
+                        if (result.ended === true) {
                             result.nomore();
                         }
 
                         window.getStatsResult = result;
-                    }, 1000);
+                }
+
+                function bytesToSize(bytes) {
+                    var k = 1000;
+                    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                    if (bytes === 0) {
+                        return '0 Bytes';
+                    }
+                    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
+                    return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
                 }
             </script>
 

@@ -3,7 +3,7 @@
 function getStatsWrapper(cb) {
     // if !peer or peer.signalingState == 'closed' then return;
 
-    if (!!navigator.mozGetUserMedia) {
+    if (typeof window.InstallTrigger !== 'undefined') {
         peer.getStats(
             mediaStreamTrack,
             function(res) {

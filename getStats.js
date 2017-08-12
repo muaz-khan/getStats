@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2017-08-02 2:33:00 PM UTC
+// Last time updated: 2017-08-11 1:21:20 PM UTC
 
 // _______________
 // getStats v1.0.4
@@ -29,7 +29,9 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             },
             recv: {
                 tracks: []
-            }
+            },
+            bytesSent: 0,
+            bytesReceived: 0
         },
         video: {
             send: {
@@ -37,7 +39,9 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             },
             recv: {
                 tracks: []
-            }
+            },
+            bytesSent: 0,
+            bytesReceived: 0
         },
         results: {},
         connectionType: {},
@@ -136,7 +140,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     function getStatsWrapper(cb) {
         // if !peer or peer.signalingState == 'closed' then return;
 
-        if (!!navigator.mozGetUserMedia) {
+        if (typeof window.InstallTrigger !== 'undefined') {
             peer.getStats(
                 mediaStreamTrack,
                 function(res) {
@@ -166,11 +170,11 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }
     };
 
-    getStatsParser.checkDataChannel = function(result) {
-        if (result.datachannelid && v.type === 'datachannel') {
-            getStatsResult.datachannel = {
-                state: result.state // open or connecting
-            }
+    getStatsParser.datachannel = function(result) {
+        if (result.type !== 'datachannel') return;
+
+        getStatsResult.datachannel = {
+            state: result.state // open or connecting
         }
     };
 
@@ -269,7 +273,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }
     };
 
-    getStatsParser.checkVideoBandwidth = function(result) {
+    getStatsParser.bweforvideo = function(result) {
         if (result.type !== 'VideoBwe') return;
 
         // id === 'bweforvideo'
@@ -372,6 +376,17 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         getStatsResult.connectionType.remote.ipAddress = result.ipAddress + ':' + result.portNumber;
         getStatsResult.connectionType.remote.networkType = getStatsResult.connectionType.remote.networkType || result.networkType || systemNetworkType;
         getStatsResult.connectionType.remote.transport = result.transport;
+    };
+
+    getStatsParser.dataSentReceived = function(result) {
+        var mediaType = result.googCodecName !== 'opus' ? 'video' : 'audio';
+        if (!!result.bytesSent) {
+            getStatsResult[mediaType].bytesSent += parseInt(result.bytesSent);
+        }
+
+        if (!!result.bytesReceived) {
+            getStatsResult[mediaType].bytesReceived += parseInt(result.bytesReceived);
+        }
     };
 
     getStatsLooper();

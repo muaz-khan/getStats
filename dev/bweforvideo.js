@@ -1,4 +1,4 @@
-getStatsParser.checkVideoBandwidth = function(result) {
+getStatsParser.bweforvideo = function(result) {
     if (result.type !== 'VideoBwe') return;
 
     // id === 'bweforvideo'

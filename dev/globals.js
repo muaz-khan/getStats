@@ -13,7 +13,9 @@ var getStatsResult = {
         },
         recv: {
             tracks: []
-        }
+        },
+        bytesSent: 0,
+        bytesReceived: 0
     },
     video: {
         send: {
@@ -21,7 +23,9 @@ var getStatsResult = {
         },
         recv: {
             tracks: []
-        }
+        },
+        bytesSent: 0,
+        bytesReceived: 0
     },
     results: {},
     connectionType: {},

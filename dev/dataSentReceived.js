@@ -1,10 +1,11 @@
 getStatsParser.dataSentReceived = function(result) {
-    var mediaType = result.googCodecName !== 'opus' ? 'video' : 'audio';
+    if (!result.googCodecName || (result.mediaType !== 'video' && result.mediaType !== 'audio')) return;
+
     if (!!result.bytesSent) {
-        getStatsResult[mediaType].bytesSent += parseInt(result.bytesSent);
+        getStatsResult[result.mediaType].bytesSent = parseInt(result.bytesSent);
     }
 
     if (!!result.bytesReceived) {
-        getStatsResult[mediaType].bytesReceived += parseInt(result.bytesReceived);
+        getStatsResult[result.mediaType].bytesReceived = parseInt(result.bytesReceived);
     }
 };

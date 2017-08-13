@@ -7,35 +7,65 @@ if (typeof MediaStreamTrack === 'undefined') {
 var systemNetworkType = ((navigator.connection || {}).type || 'unknown').toString().toLowerCase();
 
 var getStatsResult = {
+    encryption: 'sha-256',
     audio: {
         send: {
-            tracks: []
+            tracks: [],
+            codecs: [],
+            availableBandwidth: 0,
+            streams: 0
         },
         recv: {
-            tracks: []
+            tracks: [],
+            codecs: [],
+            availableBandwidth: 0,
+            streams: 0
         },
         bytesSent: 0,
         bytesReceived: 0
     },
     video: {
         send: {
-            tracks: []
+            tracks: [],
+            codecs: [],
+            availableBandwidth: 0,
+            streams: 0
         },
         recv: {
-            tracks: []
+            tracks: [],
+            codecs: [],
+            availableBandwidth: 0,
+            streams: 0
         },
         bytesSent: 0,
         bytesReceived: 0
     },
     results: {},
-    connectionType: {},
     connectionType: {
-        local: {},
-        remote: {}
+        systemNetworkType: systemNetworkType,
+        systemIpAddress: '192.168.1.2',
+        local: {
+            candidateType: [],
+            transport: [],
+            ipAddress: [],
+            networkType: []
+        },
+        remote: {
+            candidateType: [],
+            transport: [],
+            ipAddress: [],
+            networkType: []
+        }
     },
     resolutions: {
-        send: {},
-        recv: {}
+        send: {
+            width: 0,
+            height: 0
+        },
+        recv: {
+            width: 0,
+            height: 0
+        }
     },
     internal: {
         audio: {

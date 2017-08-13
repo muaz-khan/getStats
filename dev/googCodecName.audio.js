@@ -1,7 +1,15 @@
+var AUDIO_codecs = ['opus', 'isac', 'ilbc'];
+
 getStatsParser.checkAudioTracks = function(result) {
-    if (result.googCodecName !== 'opus') return;
+    if (!result.googCodecName || result.mediaType !== 'audio') return;
+
+    if (AUDIO_codecs.indexOf(result.googCodecName.toLowerCase()) === -1) return;
 
     var sendrecvType = result.id.split('_').pop();
+
+    if (getStatsResult.audio[sendrecvType].codecs.indexOf(result.googCodecName) === -1) {
+        getStatsResult.audio[sendrecvType].codecs.push(result.googCodecName);
+    }
 
     if (result.bytesSent) {
         var kilobytes = 0;

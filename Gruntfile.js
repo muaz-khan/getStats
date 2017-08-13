@@ -49,6 +49,7 @@ module.exports = function(grunt) {
                     'dev/localcandidate.js',
                     'dev/remotecandidate.js',
                     'dev/dataSentReceived.js',
+                    'dev/ssrc.js',
                     'dev/tail.js'
                 ],
                 dest: 'getStats.js',

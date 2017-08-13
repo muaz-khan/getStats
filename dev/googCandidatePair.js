@@ -15,14 +15,6 @@ getStatsParser.googCandidatePair = function(result) {
 
         var localCandidate = getStatsResult.internal.candidates[result.localCandidateId];
         if (localCandidate) {
-            if (localCandidate.networkType) {
-                getStatsResult.connectionType.local.networkType = localCandidate.networkType;
-            }
-
-            if (localCandidate.transport) {
-                getStatsResult.connectionType.local.transport = localCandidate.transport;
-            }
-
             if (localCandidate.ipAddress) {
                 getStatsResult.connectionType.systemIpAddress = localCandidate.ipAddress;
             }
@@ -30,14 +22,6 @@ getStatsParser.googCandidatePair = function(result) {
 
         var remoteCandidate = getStatsResult.internal.candidates[result.remoteCandidateId];
         if (remoteCandidate) {
-            if (remoteCandidate.networkType) {
-                getStatsResult.connectionType.remote.networkType = remoteCandidate.networkType;
-            }
-
-            if (remoteCandidate.transport) {
-                getStatsResult.connectionType.remote.transport = remoteCandidate.transport;
-            }
-
             if (remoteCandidate.ipAddress) {
                 getStatsResult.connectionType.systemIpAddress = remoteCandidate.ipAddress;
             }

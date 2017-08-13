@@ -1,8 +1,17 @@
+var VIDEO_codecs = ['vp9', 'vp8', 'h264'];
+
 getStatsParser.checkVideoTracks = function(result) {
-    if (result.googCodecName !== 'VP8' && result.googCodecName !== 'VP9') return;
+    if (!result.googCodecName || result.mediaType !== 'video') return;
+
+    if (VIDEO_codecs.indexOf(result.googCodecName.toLowerCase()) === -1) return;
+
     // googCurrentDelayMs, googRenderDelayMs, googTargetDelayMs
     // transportId === 'Channel-audio-1'
     var sendrecvType = result.id.split('_').pop();
+
+    if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName) === -1) {
+        getStatsResult.video[sendrecvType].codecs.push(result.googCodecName);
+    }
 
     if (!!result.bytesSent) {
         var kilobytes = 0;

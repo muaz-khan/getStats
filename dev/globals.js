@@ -40,6 +40,11 @@ var getStatsResult = {
         bytesSent: 0,
         bytesReceived: 0
     },
+    bandwidth: {
+        systemBandwidth: 0,
+        sentPerSecond: 0,
+        encodedPerSecond: 0
+    },
     results: {},
     connectionType: {
         systemNetworkType: systemNetworkType,

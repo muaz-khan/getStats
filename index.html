@@ -1,4 +1,4 @@
-<!-- Demo version: 2017.08.13 -->
+<!-- Demo version: 2017.08.26 -->
 
 <!--
 > Muaz Khan     - www.MuazKhan.com
@@ -9,7 +9,7 @@
 <html lang="en">
 
 <head>
-    <title>getStats.js Demo | Muaz Khan</title>
+    <title>getStats.js Demo | WebRTC getStats API</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -71,8 +71,7 @@
                 display:block;
             }
             video {
-                width:20em;
-                height: 15em;
+                width:100%;
                 background: black;
             }
 
@@ -82,15 +81,42 @@
                 text-align: left;
             }
 
-            .grid {
-                text-align: center;
-                display: grid;
-                grid-gap: 10px;
-                grid-template-columns: minmax(200px, 1fr) minmax(200px, 1fr);
+            table {
+                width: 100%;
+            }
+
+            td, th, tr {
+                padding: 1px 3px;
+            }
+
+            td {
+                width: 40%!important;
+            }
+
+            td:first-child, th {
+                font-weight: bold;
+                color: #EC008C;
+            }
+
+            td:first-child, th:first-child {
+                width: 150px!important;
+            }
+
+            table {
+                border-bottom: 1px dotted #BBA9A9;
+                border-left: 1px dotted #BBA9A9;
+            }
+
+            label {
+                width: 100px!important;
+                display: inline-block;
+                text-align: right;
+                padding-right: 15px;
             }
     </style>
 
-    <script src="getStats.js"></script>
+    <script src="https://cdn.webrtc-experiment.com/getStats.js"></script>
+    <script src="https://cdn.webrtc-experiment.com/IceServersHandler.js"></script>
 
     <!-- for Edige/FF/Chrome/Opera/etc. getUserMedia support -->
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
@@ -100,7 +126,7 @@
     <article>
         <header style="text-align: center;">
             <h1>
-                getStats.js Demo | <a href="https://github.com/muaz-khan" target="_blank">Muaz Khan</a>
+                getStats.js Demo | WebRTC getStats API
             </h1>
             <p>
                 <a href="https://www.webrtc-experiment.com/">HOME</a>
@@ -117,79 +143,166 @@
 
         <div style="text-align: center; margin-bottom: 20px;">
             <button id="btn-stop" disabled>Stop Camera & getStats</button>
+            <select id="select-iceTransportPolicy">
+                <option value="all">STUN+TURN</option>
+                <option value="relay">TURN Only</option>
+            </select>
+            <select id="select-iceTransportLimitation">
+                <option value="all">UDP+TCP</option>
+                <option value="tcp">TCP Only</option>
+            </select>
+            <select id="select-codec">
+                <option value="vp9">VP9</option>
+                <option value="vp8">VP8</option>
+            </select>
         </div>
-        
-        <div class="grid">
-                <div class="videos-container">
-                    <video id="peer2-to-peer1" controls></video>
-                     <h2>Offerer-to-Answerer</h2>
-                     <p><b>EncryptedAs:</b> <span id="peer1-encryptedAs"></span></p>
-                     <p><b>Codecs send:</b> <span id="peer1-codecsSend"></span></p>
-                     <p><b>Codecs recv:</b> <span id="peer1-codecsRecv"></span></p>
-                     <p><b>Local ICE type:</b> <span id="peer1-localIceType"></span></p>
-                     <p><b>Remote ICE type:</b> <span id="peer1-remoteIceType"></span></p>
-                     <p><b>Local Network type:</b> <span id="peer1-localNetworkType"></span></p>
-                     <p><b>Remote Network type:</b> <span id="peer1-remoteNetworkType"></span></p>
-                     <p><b>Local transport:</b> <span id="peer1-localTransport"></span></p>
-                     <p><b>Remote transport:</b> <span id="peer1-remoteTransport"></span></p>
-                     
-                     <p><b>Sender IP:</b> <span id="peer1-externalIPAddressLocal"></span></p>
-                     <p><b>Receiver IP:</b> <span id="peer1-externalIPAddressRemote"></span></p>
-                     <p><b>System/Local IP:</b> <span id="peer1-systemIPAddress"></span></p>
 
-                     <p><b>Audio Send bandwidth:</b> <span id="peer1-audioAvailableBandwidthForSenders"></span> kbps</p>
-                     <p><b>Audio Recv bandwidth:</b> <span id="peer1-audioAvailableBandwidthForReceivers"></span> kbps</p>
-                     <p><b>Video Send bandwidth:</b> <span id="peer1-videoAvailableBandwidthForSenders"></span> kbps</p>
-                     <p><b>Video Recv bandwidth:</b> <span id="peer1-videoAvailableBandwidthForReceivers"></span> kbps</p>
-                     <p><b>Video Send resolutions:</b> <span id="peer1-videoResolutionsForSenders"></span></p>
-                     <p><b>Video Recv resolutions:</b> <span id="peer1-videoResolutionsForReceivers"></span></p>
-                     <p><b>Send tracks:</b> <span id="peer1-audioVideoTracksForSenders"></span></p>
-                     <p><b>Recv tracks:</b> <span id="peer1-audioVideoTracksForReceivers"></span></p>
-                     <p><b>Total Data Sent:</b> <span id="peer1-totalDataForSenders"></span></p>
-                     <p><b>Total Data Recv:</b> <span id="peer1-totalDataForReceivers"></span></p>
-                </div>
-                <div class="videos-container">
-                    <video id="peer1-to-peer2" controls></video>
-                     <h2>Answerer-to-Offerer</h2>
-                     <p><b>EncryptedAs:</b> <span id="peer2-encryptedAs"></span></p>
-                     <p><b>Codecs send:</b> <span id="peer2-codecsSend"></span></p>
-                     <p><b>Codecs recv:</b> <span id="peer2-codecsRecv"></span></p>
-                     <p><b>Local ICE type:</b> <span id="peer2-localIceType"></span></p>
-                     <p><b>Remote ICE type:</b> <span id="peer2-remoteIceType"></span></p>
-                     <p><b>Local Network type:</b> <span id="peer2-localNetworkType"></span></p>
-                     <p><b>Remote Network type:</b> <span id="peer2-remoteNetworkType"></span></p>
-                     <p><b>Local transport:</b> <span id="peer2-localTransport"></span></p>
-                     <p><b>Remote transport:</b> <span id="peer2-remoteTransport"></span></p>
-                     
-                     <p><b>Sender IP:</b> <span id="peer2-externalIPAddressLocal"></span></p>
-                     <p><b>Receiver IP:</b> <span id="peer2-externalIPAddressRemote"></span></p>
-                     <p><b>System/Local IP:</b> <span id="peer2-systemIPAddress"></span></p>
+        <table>
+            <thead>
+                <th></th>
+                <th>First Peer</th>
+                <th>Second Peer</th>
+            </thead>
 
-                     <p><b>Audio Send bandwidth:</b> <span id="peer2-audioAvailableBandwidthForSenders"></span> kbps</p>
-                     <p><b>Audio Recv bandwidth:</b> <span id="peer2-audioAvailableBandwidthForReceivers"></span> kbps</p>
-                     <p><b>Video Send bandwidth:</b> <span id="peer2-videoAvailableBandwidthForSenders"></span> kbps</p>
-                     <p><b>Video Recv bandwidth:</b> <span id="peer2-videoAvailableBandwidthForReceivers"></span> kbps</p>
-                     <p><b>Video Send resolutions:</b> <span id="peer2-videoResolutionsForSenders"></span></p>
-                     <p><b>Video Recv resolutions:</b> <span id="peer2-videoResolutionsForReceivers"></span></p>
-                     <p><b>Send tracks:</b> <span id="peer2-audioVideoTracksForSenders"></span></p>
-                     <p><b>Recv tracks:</b> <span id="peer2-audioVideoTracksForReceivers"></span></p>
-                     <p><b>Total Data Sent:</b> <span id="peer2-totalDataForSenders"></span></p>
-                     <p><b>Total Data Recv:</b> <span id="peer2-totalDataForReceivers"></span></p>
-                </div>
-            </div>
+            <tbody>
+                <tr>
+                    <td>
+                        Videos
+                    </td>
+                    <td>
+                        <video id="peer2-to-peer1" controls muted></video>
+                    </td>
+                    <td>
+                        <video id="peer1-to-peer2" controls muted></video>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Available Bandwidth</td>
+                    <td><span id="peer1-availableSendBandwidth"></span></td>
+                    <td><span id="peer2-availableSendBandwidth"></span></td>
+                </tr>
+
+                <tr>
+                    <td>STUN/TURN?</td>
+                    <td>
+                        <label>Local:</label> <span id="peer1-localIceType"></span> (<span id="peer1-localTransport"></span>)<br>
+                        <label>Remote:</label> <span id="peer1-remoteIceType"></span> (<span id="peer1-remoteTransport"></span>)<br>
+                    </td>
+                    <td>
+                        <label>Local:</label> <span id="peer2-localIceType"></span> (<span id="peer2-localTransport"></span>)<br>
+                        <label>Remote:</label> <span id="peer2-remoteIceType"></span> (<span id="peer2-remoteTransport"></span>)<br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Codecs</td>
+                    <td>
+                        <label>Send:</label> <span id="peer1-codecsSend"></span><br>
+                        <label>Recv:</label> <span id="peer1-codecsRecv"></span><br>
+                    </td>
+                    <td>
+                        <label>Send:</label> <span id="peer2-codecsSend"></span><br>
+                        <label>Recv:</label> <span id="peer2-codecsRecv"></span><br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Encryption</td>
+                    <td><span id="peer1-encryptedAs"></span></td>
+                    <td><span id="peer2-encryptedAs"></span></td>
+                </tr>
+
+                <tr>
+                    <td>IP Address</td>
+                    <td>
+                        <label>Send:</label> <span id="peer1-externalIPAddressLocal"></span><br>
+                        <label>Recv:</label> <span id="peer1-externalIPAddressRemote"></span>
+                    </td>
+                    <td>
+                        <label>Send:</label> <span id="peer2-externalIPAddressLocal"></span><br>
+                        <label>Recv:</label> <span id="peer2-externalIPAddressRemote"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Resolutions</td>
+                    <td>
+                        <label>Send:</label> <span id="peer1-videoResolutionsForSenders"></span><br>
+                        <label>Recv:</label> <span id="peer1-videoResolutionsForReceivers"></span>
+                    </td>
+                    <td>
+                        <label>Send:</label> <span id="peer2-videoResolutionsForSenders"></span><br>
+                        <label>Recv:</label> <span id="peer2-videoResolutionsForReceivers"></span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Data</td>
+                    <td>
+                        <label>Send:</label> <span id="peer1-totalDataForSenders"></span><br>
+                        <label>Recv:</label> <span id="peer1-totalDataForReceivers"></span>
+                    </td>
+                    <td>
+                        <label>Send:</label> <span id="peer2-totalDataForSenders"></span><br>
+                        <label>Recv:</label> <span id="peer2-totalDataForReceivers"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <blockquote style="margin: 20px;">
+            Multi-user peer-to-peer demo: <a href="https://rtcmulticonnection.herokuapp.com/demos/getStats.html">getStats using RTCMultiConnection</a>
+        </blockquote>
+
+            <script>
+                var iceTransportPolicy = document.getElementById('select-iceTransportPolicy');
+                if(localStorage.getItem('iceTransportPolicy')) {
+                    iceTransportPolicy.value = localStorage.getItem('iceTransportPolicy');
+                }
+                iceTransportPolicy.onchange = function() {
+                    localStorage.setItem('iceTransportPolicy', this.value);
+                    location.reload();
+                };
+
+                var iceTransportLimitation = document.getElementById('select-iceTransportLimitation');
+                if(localStorage.getItem('iceTransportLimitation')) {
+                    iceTransportLimitation.value = localStorage.getItem('iceTransportLimitation');
+                }
+                iceTransportLimitation.onchange = function() {
+                    localStorage.setItem('iceTransportLimitation', this.value);
+                    location.reload();
+                };
+
+                var codec = document.getElementById('select-codec');
+                if(localStorage.getItem('codec')) {
+                    codec.value = localStorage.getItem('codec');
+                }
+                codec.onchange = function() {
+                    localStorage.setItem('codec', this.value);
+                    location.reload();
+                };
+
+                function addIceCandidate(peer, candidate) {
+                    if(iceTransportLimitation.value === 'tcp') {
+                        if(candidate.candidate.toLowerCase().indexOf('tcp') === -1) {
+                            return; // ignore UDP
+                        }
+                    }
+
+                    peer.addIceCandidate(candidate);
+                }
+            </script>
             <script>
                 var offerer, answerer;
                 var offererToAnswerer = document.getElementById('peer1-to-peer2');
                 var answererToOfferer = document.getElementById('peer2-to-peer1');
 
-                var iceServers = [];
-
-                iceServers.push({
-                    urls: 'stun:stun.l.google.com:19302'
-                });
-
-                iceServers = {
-                    iceServers: iceServers
+                var iceServers = {
+                    iceServers: IceServersHandler.getIceServers(),
+                    iceTransportPolicy: iceTransportPolicy.value,
+                    rtcpMuxPolicy: 'require',
+                    bundlePolicy: 'max-bundle'
                 };
 
                 var mediaConstraints = {
@@ -229,7 +342,7 @@
 
                     offerer.onicecandidate = function (event) {
                         if (!event || !event.candidate) return;
-                        answerer.addIceCandidate(event.candidate);
+                        addIceCandidate(answerer, event.candidate);
                     };
 
                     offerer.createOffer(mediaConstraints).then(function (offer) {
@@ -272,7 +385,7 @@
 
                     answerer.onicecandidate = function (event) {
                         if (!event || !event.candidate) return;
-                        offerer.addIceCandidate(event.candidate);
+                        addIceCandidate(offerer, event.candidate);
                     };
 
                     answerer.setRemoteDescription(offer);
@@ -329,36 +442,39 @@
                             return;
                         }
 
-                        document.getElementById('peer' + peer.id + '-remoteIceType').innerHTML = result.connectionType.remote.candidateType.join(', ');
-                        document.getElementById('peer' + peer.id + '-remoteNetworkType').innerHTML = result.connectionType.remote.networkType.join(', ');
+                        if(result.connectionType.remote.candidateType.indexOf('relayed') !== -1) {
+                            result.connectionType.remote.candidateType = 'TURN';
+                        }
+                        else {
+                            result.connectionType.remote.candidateType = 'STUN';
+                        }
+
+                        document.getElementById('peer' + peer.id + '-remoteIceType').innerHTML = result.connectionType.remote.candidateType;
                         document.getElementById('peer' + peer.id + '-externalIPAddressRemote').innerHTML = result.connectionType.remote.ipAddress.join(', ');
-                        document.getElementById('peer' + peer.id + '-localTransport').innerHTML = result.connectionType.remote.transport.join(', ');
+                        document.getElementById('peer' + peer.id + '-remoteTransport').innerHTML = result.connectionType.remote.transport.join(', ');
 
-                        document.getElementById('peer' + peer.id + '-systemIPAddress').innerHTML = result.connectionType.systemIpAddress;
-
-                        document.getElementById('peer' + peer.id + '-localIceType').innerHTML = result.connectionType.local.candidateType.join(', ');
-                        document.getElementById('peer' + peer.id + '-localNetworkType').innerHTML = result.connectionType.local.networkType.join(', ');
+                        if(result.connectionType.local.candidateType.indexOf('relayed') !== -1) {
+                            result.connectionType.local.candidateType = 'TURN';
+                        }
+                        else {
+                            result.connectionType.local.candidateType = 'STUN';
+                        }
+                        document.getElementById('peer' + peer.id + '-localIceType').innerHTML = result.connectionType.local.candidateType;
                         document.getElementById('peer' + peer.id + '-externalIPAddressLocal').innerHTML = result.connectionType.local.ipAddress.join(', ');
                         document.getElementById('peer' + peer.id + '-localTransport').innerHTML = result.connectionType.local.transport.join(', ');
 
                         document.getElementById('peer' + peer.id + '-encryptedAs').innerHTML = result.encryption;
 
-                        document.getElementById('peer' + peer.id + '-audioAvailableBandwidthForSenders').innerHTML = result.audio.send.availableBandwidth;
-                        document.getElementById('peer' + peer.id + '-audioAvailableBandwidthForReceivers').innerHTML = result.audio.recv.availableBandwidth;
-                        document.getElementById('peer' + peer.id + '-videoAvailableBandwidthForSenders').innerHTML = result.video.send.availableBandwidth;
-                        document.getElementById('peer' + peer.id + '-videoAvailableBandwidthForReceivers').innerHTML = result.video.recv.availableBandwidth;
-
                         document.getElementById('peer' + peer.id + '-videoResolutionsForSenders').innerHTML = result.resolutions.send.width + 'x' + result.resolutions.send.height;
                         document.getElementById('peer' + peer.id + '-videoResolutionsForReceivers').innerHTML = result.resolutions.recv.width + 'x' + result.resolutions.recv.height;
-
-                        document.getElementById('peer' + peer.id + '-audioVideoTracksForSenders').innerHTML = result.audio.send.tracks.length + result.video.send.tracks.length;
-                        document.getElementById('peer' + peer.id + '-audioVideoTracksForReceivers').innerHTML = result.audio.recv.tracks.length + result.video.recv.tracks.length;
 
                         document.getElementById('peer' + peer.id + '-totalDataForSenders').innerHTML = bytesToSize(result.audio.bytesSent + result.video.bytesSent);
                         document.getElementById('peer' + peer.id + '-totalDataForReceivers').innerHTML = bytesToSize(result.audio.bytesReceived + result.video.bytesReceived);
 
                         document.getElementById('peer' + peer.id + '-codecsSend').innerHTML = result.audio.send.codecs.concat(result.video.send.codecs).join(', ');
                         document.getElementById('peer' + peer.id + '-codecsRecv').innerHTML = result.audio.recv.codecs.concat(result.video.recv.codecs).join(', ');
+
+                        document.getElementById('peer' + peer.id + '-availableSendBandwidth').innerHTML = bytesToSize(result.bandwidth.availableSendBandwidth);
 
                         if (result.ended === true) {
                             result.nomore();
@@ -378,6 +494,10 @@
                 }
 
                 function preferVP9(sdp) {
+                    if(codec.value === 'vp8') {
+                        return sdp; // ignore VP9
+                    }
+
                     if (sdp.indexOf('SAVPF 96 98') === -1 || sdp.indexOf('VP9/90000') === -1) {
                         return sdp;
                     }
@@ -386,13 +506,13 @@
                 }
             </script>
 
-        <section class="experiment own-widgets">
+        <section>
             <h2 class="header" id="updates" style="color: red; padding-bottom: .1em;"><a href="https://github.com/muaz-khan/getStats/issues" target="_blank">getStats Issues</a>
             </h2>
             <div id="github-issues"></div>
         </section>
 
-        <section class="experiment">
+        <section>
             <h2 class="header" id="feedback">Feedback</h2>
             <div>
                 <textarea id="message" style="border: 1px solid rgb(189, 189, 189); height: 8em; margin: .2em; outline: none; resize: vertical; width: 98%;" placeholder="Have any message? Suggestions or something went wrong?"></textarea>
@@ -401,7 +521,7 @@
             <small style="margin-left: 1em;">Enter your email too; if you want "direct" reply!</small>
         </section>
 
-        <section class="experiment own-widgets latest-commits">
+        <section>
             <h2 class="header" id="updates" style="color: red; padding-bottom: .1em;"><a href="https://github.com/muaz-khan/getStats/commits/master" target="_blank">Latest Updates</a>
             </h2>
             <div id="github-commits"></div>

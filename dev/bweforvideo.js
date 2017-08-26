@@ -1,15 +1,13 @@
 getStatsParser.bweforvideo = function(result) {
     if (result.type !== 'VideoBwe') return;
 
-    // id === 'bweforvideo'
+    getStatsResult.bandwidth.availableSendBandwidth = result.googAvailableSendBandwidth;
 
-    getStatsResult.video.bandwidth = {
-        googActualEncBitrate: result.googActualEncBitrate,
-        googAvailableSendBandwidth: result.googAvailableSendBandwidth,
-        googAvailableReceiveBandwidth: result.googAvailableReceiveBandwidth,
-        googRetransmitBitrate: result.googRetransmitBitrate,
-        googTargetEncBitrate: result.googTargetEncBitrate,
-        googBucketDelay: result.googBucketDelay,
-        googTransmitBitrate: result.googTransmitBitrate
-    };
+    getStatsResult.bandwidth.googActualEncBitrate = result.googActualEncBitrate;
+    getStatsResult.bandwidth.googAvailableSendBandwidth = result.googAvailableSendBandwidth;
+    getStatsResult.bandwidth.googAvailableReceiveBandwidth = result.googAvailableReceiveBandwidth;
+    getStatsResult.bandwidth.googRetransmitBitrate = result.googRetransmitBitrate;
+    getStatsResult.bandwidth.googTargetEncBitrate = result.googTargetEncBitrate;
+    getStatsResult.bandwidth.googBucketDelay = result.googBucketDelay;
+    getStatsResult.bandwidth.googTransmitBitrate = result.googTransmitBitrate;
 };

@@ -1,10 +1,14 @@
-# [getStats.js](https://github.com/muaz-khan/getStats) / [Demo](https://www.webrtc-experiment.com/getStats/)
+# [getStats.js](https://github.com/muaz-khan/getStats)
+
+# [Single Page Demo](https://www.webrtc-experiment.com/getStats/) or [Multi User P2P Demo](https://rtcmulticonnection.herokuapp.com/demos/getStats.html)
 
 [![npm](https://img.shields.io/npm/v/getstats.svg)](https://npmjs.org/package/getstats) [![downloads](https://img.shields.io/npm/dm/getstats.svg)](https://npmjs.org/package/getstats) [![Build Status: Linux](https://travis-ci.org/muaz-khan/getStats.png?branch=master)](https://travis-ci.org/muaz-khan/getStats)
 
 A tiny JavaScript library using [WebRTC getStats API](http://dev.w3.org/2011/webrtc/editor/webrtc.html#dom-peerconnection-getstats) to return peer connection stats i.e. bandwidth usage, packets lost, local/remote ip addresses and ports, type of connection etc.
 
 It is <a href="https://www.webrtc-experiment.com/licence/">MIT Licenced</a>, which means that you can use it in any commercial/non-commercial product, free of cost.
+
+![getStats](https://cdn.webrtc-experiment.com/images/getStats.png)
 
 ```
 npm install getstats
@@ -33,6 +37,9 @@ To use it:
 
 <!-- or without CDN -->
 <script src="https://www.webrtc-experiment.com/getStats.js"></script>
+
+<!-- or rawgit -->
+<script src="https://rawgit.com/muaz-khan/getStats/master/getStats.js"></script>
 ```
 
 Or link specific build:
@@ -40,7 +47,7 @@ Or link specific build:
 * https://github.com/muaz-khan/getStats/releases
 
 ```html
-<script src="https://github.com/muaz-khan/getStats/releases/download/1.0.4/getStats.js"></script>
+<script src="https://github.com/muaz-khan/getStats/releases/download/1.0.5/getStats.js"></script>
 ```
 
 # `window.getStats`
@@ -92,8 +99,7 @@ rtcPeerConnection.getPeerStats(function(result) {
     result.connectionType.remote.candidateType
     result.connectionType.transport
     
-    result.audio.send.availableBandwidth
-    result.audio.recv.availableBandwidth
+    result.bandwidth.availableSendBandwidth // it will be your system bandwidth for STUN connections
     result.audio.packetsSent
     result.audio.packetsLost
     result.audio.rtt
@@ -141,6 +147,10 @@ btnStopGetStats.onclick  = function() {
     getStatsResult.nomore();
 };
 ```
+
+# `result.bandwidth`
+
+1. `result.bandwidth.availableSendBandwidth`
 
 # `result.audio`
 

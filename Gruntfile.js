@@ -45,9 +45,9 @@ module.exports = function(grunt) {
                     'dev/googCodecName.audio.js',
                     'dev/googCodecName.video.js',
                     'dev/bweforvideo.js',
-                    'dev/googCandidatePair.js',
-                    'dev/localcandidate.js',
-                    'dev/remotecandidate.js',
+                    'dev/candidate-pair.js',
+                    'dev/local-candidate.js',
+                    'dev/remote-candidate.js',
                     'dev/dataSentReceived.js',
                     'dev/ssrc.js',
                     'dev/tail.js'

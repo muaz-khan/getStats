@@ -480,10 +480,7 @@
                         document.getElementById('peer' + peer.id + '-codecsSend').innerHTML = result.audio.send.codecs.concat(result.video.send.codecs).join(', ');
                         document.getElementById('peer' + peer.id + '-codecsRecv').innerHTML = result.audio.recv.codecs.concat(result.video.recv.codecs).join(', ');
 
-                        var bandwidthSpeed = bytesToSize((result.audio.bytesSent - bandwidthSpeedHelper[peer.id].prevAudioBytesSent) + (result.video.bytesSent - bandwidthSpeedHelper[peer.id].prevVideoBytesSent));
-                        bandwidthSpeedHelper[peer.id].prevAudioBytesSent = result.audio.bytesSent;
-                        bandwidthSpeedHelper[peer.id].prevVideoBytesSent = result.video.bytesSent;
-                        document.getElementById('peer' + peer.id + '-bandwidthSpeed').innerHTML = bandwidthSpeed;
+                        document.getElementById('peer' + peer.id + '-bandwidthSpeed').innerHTML = bytesToSize(result.bandwidth.speed);
 
                         if (result.ended === true) {
                             result.nomore();
@@ -492,24 +489,18 @@
                         window.getStatsResult = result;
                 }
 
-                var bandwidthSpeedHelper = {
-                    1: {
-                        prevAudioBytesSent: 0,
-                        prevVideoBytesSent: 0
-                    },
-                    2: {
-                        prevAudioBytesSent: 0,
-                        prevVideoBytesSent: 0
-                    }
-                };
-
                 function bytesToSize(bytes) {
                     var k = 1000;
                     var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-                    if (bytes === 0) {
+                    if (bytes <= 0) {
                         return '0 Bytes';
                     }
                     var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
+                    
+                    if(!sizes[i]) {
+                        return '0 Bytes';
+                    }
+
                     return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
                 }
 

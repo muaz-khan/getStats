@@ -47,7 +47,7 @@ Or link specific build:
 * https://github.com/muaz-khan/getStats/releases
 
 ```html
-<script src="https://github.com/muaz-khan/getStats/releases/download/1.0.5/getStats.js"></script>
+<script src="https://github.com/muaz-khan/getStats/releases/download/1.0.6/getStats.js"></script>
 ```
 
 # `window.getStats`
@@ -99,7 +99,7 @@ rtcPeerConnection.getPeerStats(function(result) {
     result.connectionType.remote.candidateType
     result.connectionType.transport
     
-    result.bandwidth.availableSendBandwidth // it will be your system bandwidth for STUN connections
+    result.bandwidth.speed // bandwidth download speed (bytes per second)
     result.audio.packetsSent
     result.audio.packetsLost
     result.audio.rtt
@@ -150,7 +150,10 @@ btnStopGetStats.onclick  = function() {
 
 # `result.bandwidth`
 
-1. `result.bandwidth.availableSendBandwidth`
+1. `result.bandwidth.speed` - your system bandwidth download speed (bytes per second)
+2. `result.bandwidth.systemBandwidth`
+3. `result.bandwidth.sentPerSecond`
+4. `result.bandwidth.encodedPerSecond`
 
 # `result.audio`
 

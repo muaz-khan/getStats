@@ -1,4 +1,4 @@
-# [getStats.js](https://github.com/muaz-khan/getStats)
+# [getStats.js](https://github.com/muaz-khan/getStats) | WebRTC getStats API
 
 # [Single Page Demo](https://www.webrtc-experiment.com/getStats/) or [Multi User P2P Demo](https://rtcmulticonnection.herokuapp.com/demos/getStats.html)
 

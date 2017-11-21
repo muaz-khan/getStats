@@ -515,6 +515,10 @@
                         return sdp;
                     }
 
+                    if(codec.value === 'h264' && info.h264LineNumber === info.videoCodecNumbers[0]) {
+                        return sdp;
+                    }
+
                     sdp = preferCodec(sdp, codec.value, info);
 
                     return sdp;
@@ -525,24 +529,21 @@
 
                     if(codec === 'vp8') {
                         if(!info.vp8LineNumber) {
-                            alert('This browser do not support VP8 codec.');
-                            return;
+                            return sdp;
                         }
                         preferCodecNumber = info.vp8LineNumber;
                     }
                     
                     if(codec === 'vp9') {
                         if(!info.vp9LineNumber) {
-                            alert('This browser do not support VP9 codec.');
-                            return;
+                            return sdp;
                         }
                         preferCodecNumber = info.vp9LineNumber;
                     }
                     
                     if(codec === 'h264') {
                         if(!info.h264LineNumber) {
-                            alert('This browser do not support H264 codec.');
-                            return;
+                            return sdp;
                         }
 
                         preferCodecNumber = info.h264LineNumber;

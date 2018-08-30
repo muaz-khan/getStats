@@ -1,8 +1,7 @@
 {
   "name": "getstats",
   "preferGlobal": true,
-  "version": "1.0.6",
-  "author": {
+  "version": "1.0.7",  "author": {
     "name": "Muaz Khan",
     "email": "muazkh@gmail.com",
     "url": "http://www.muazkhan.com/"

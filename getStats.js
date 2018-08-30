@@ -1,9 +1,9 @@
 'use strict';
 
-// Last time updated: 2018-08-30 5:31:30 AM UTC
+// Last time updated: 2018-08-30 6:37:37 AM UTC
 
 // _______________
-// getStats v1.0.6
+// getStats v1.0.7
 
 // Open-Sourced: https://github.com/muaz-khan/getStats
 
@@ -318,7 +318,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 getStatsResult.internal.video[sendrecvType].prevLostPacket = result.packetsLost;
             }
 
-            var packets = result.packetsLost - getStatsResult.internal.video[sendrecvType].packetsLost;
+            var packets = result.packetsLost - getStatsResult.internal.video[sendrecvType].prevLostPacket;
             kilolostPackets = packets / 1024
         }
 

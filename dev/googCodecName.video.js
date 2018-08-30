@@ -32,7 +32,7 @@ getStatsParser.checkVideoTracks = function(result) {
             getStatsResult.internal.video[sendrecvType].prevLostPacket = result.packetsLost;
         }
 
-        var packets = result.packetsLost - getStatsResult.internal.video[sendrecvType].packetsLost;
+        var packets = result.packetsLost - getStatsResult.internal.video[sendrecvType].prevLostPacket;
         kilolostPackets = packets / 1024
     }
 

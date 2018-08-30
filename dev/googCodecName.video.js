@@ -25,6 +25,17 @@ getStatsParser.checkVideoTracks = function(result) {
         kilobytes = bytes / 1024;
     }
 
+    if (!!result.packetsLost) {
+        var kilolostPackets = 0;
+
+        if (!getStatsResult.internal.video[sendrecvType].prevLostPacket) {
+            getStatsResult.internal.video[sendrecvType].prevLostPacket = result.packetsLost;
+        }
+
+        var packets = result.packetsLost - getStatsResult.internal.video[sendrecvType].packetsLost;
+        kilolostPackets = packets / 1024
+    }
+
     if (!!result.bytesReceived) {
         var kilobytes = 0;
         if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived) {
@@ -38,6 +49,7 @@ getStatsParser.checkVideoTracks = function(result) {
     }
 
     getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+    getStatsResult.video[sendrecvType].packetsLostRate = (kilolostPackets / kilobytes).toFixed(1);
 
     if (result.googFrameHeightReceived && result.googFrameWidthReceived) {
         getStatsResult.resolutions[sendrecvType].width = result.googFrameWidthReceived;

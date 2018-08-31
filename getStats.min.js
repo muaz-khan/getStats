@@ -1,9 +1,9 @@
 'use strict';
 
-// Last time updated: 2018-08-31 10:17:00 AM UTC
+// Last time updated: 2018-08-31 10:19:15 AM UTC
 
 // _______________
-// getStats v1.0.7
+// getStats v1.0.9
 
 // Open-Sourced: https://github.com/muaz-khan/getStats
 

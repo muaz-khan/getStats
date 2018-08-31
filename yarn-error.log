@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/Arthur/.nvm/versions/node/v10.6.0/bin/node /Users/Arthur/.yarn/bin/yarn.js git@github.com:orangebook/getStats.git
+  /Users/Arthur/.nvm/versions/node/v10.6.0/bin/node /Users/Arthur/.yarn/bin/yarn.js upload:staging
 
 PATH: 
   /Users/Arthur/.yarn/bin:/Users/Arthur/.config/yarn/global/node_modules/.bin:/Users/Arthur/SysProj/depot_tools:/Users/Arthur/Library/Android/sdk/platform-tools:/Users/Arthur/Library/Android/sdk/tools:/usr/local/Cellar/ninja/1.8.2/bin:/usr/local/opt/llvm/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Applications/Wireshark.app/Contents/MacOS:/Users/Arthur/.yarn/bin:/Users/Arthur/.config/yarn/global/node_modules/.bin:/Users/Arthur/SysProj/depot_tools:/Users/Arthur/Library/Android/sdk/platform-tools:/Users/Arthur/Library/Android/sdk/tools:/usr/local/Cellar/ninja/1.8.2/bin:/usr/local/opt/llvm/bin:/Users/Arthur/.nvm/versions/node/v10.6.0/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Users/Arthur/.go_pkg:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/usr/local/opt/go/libexec/bin:/Users/Arthur/.go_pkg:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/usr/local/opt/go/libexec/bin
@@ -71,7 +71,7 @@ Lockfile:
   No lockfile
 
 Trace: 
-  Error: Command "git@github.com:orangebook/getStats.git" not found.
+  Error: Command "upload:staging" not found.
       at new MessageError (/Users/Arthur/.yarn/lib/cli.js:186:110)
       at /Users/Arthur/.yarn/lib/cli.js:87307:17
       at Generator.next (<anonymous>)

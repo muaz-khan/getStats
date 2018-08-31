@@ -48,7 +48,7 @@ getStatsParser.checkVideoTracks = function(result) {
 
         var packets = result.packetsLost - getStatsResult.internal.video[sendrecvType].prevLostPacket;
         kilolostPackets = packets / 1024;
-        getStatsResult.video[sendrecvType].packetsLostRate = kilobytes != 0 ? (kilolostPackets / kilobytes).toFixed(4) * 100 + "%" : '0.00%';
+        getStatsResult.video[sendrecvType].packetsLostRate = kilobytes != 0 ? Math.round((kilolostPackets / kilobytes) * 100) / 100 + "%" : '0.00%';
     }
     if (result.googFrameHeightReceived && result.googFrameWidthReceived) {
         getStatsResult.resolutions[sendrecvType].width = result.googFrameWidthReceived;

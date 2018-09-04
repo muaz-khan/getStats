@@ -15,7 +15,8 @@ getStatsParser.checkVideoTracks = function(result) {
 
     if (!!result.bytesSent) {
         var kilobytes = 0;
-        if (!getStatsResult.internal.video[sendrecvType].prevBytesSent) {
+        // 若刷新呀SDP重新交换，需要重新计算
+        if (!getStatsResult.internal.video[sendrecvType].prevBytesSent || getStatsResult.internal.video[sendrecvType].prevBytesSent > result.bytesSent) {
             getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
         }
 
@@ -27,7 +28,7 @@ getStatsParser.checkVideoTracks = function(result) {
 
     if (!!result.bytesReceived) {
         var kilobytes = 0;
-        if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived) {
+        if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived || getStatsResult.internal.video[sendrecvType].prevBytesReceived > result.bytesReceived) {
             getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
         }
 

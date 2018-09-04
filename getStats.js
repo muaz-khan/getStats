@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-08-31 10:19:15 AM UTC
+// Last time updated: 2018-09-04 10:26:18 AM UTC
 
 // _______________
 // getStats v1.0.9
@@ -301,7 +301,8 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
         if (!!result.bytesSent) {
             var kilobytes = 0;
-            if (!getStatsResult.internal.video[sendrecvType].prevBytesSent) {
+            // 若刷新呀SDP重新交换，需要重新计算
+            if (!getStatsResult.internal.video[sendrecvType].prevBytesSent || getStatsResult.internal.video[sendrecvType].prevBytesSent > result.bytesSent) {
                 getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
             }
 
@@ -313,7 +314,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
         if (!!result.bytesReceived) {
             var kilobytes = 0;
-            if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived) {
+            if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived || getStatsResult.internal.video[sendrecvType].prevBytesReceived > result.bytesReceived) {
                 getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
             }
 

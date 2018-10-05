@@ -1,4 +1,4 @@
-<script>window.demoVersion = '2017.11.19';</script>
+<script>window.demoVersion = '2018.10.05';</script>
 
 <!--
 > Muaz Khan     - www.MuazKhan.com
@@ -176,10 +176,10 @@
                         Videos
                     </td>
                     <td>
-                        <video id="peer2-to-peer1" controls muted></video>
+                        <video id="peer2-to-peer1" autoplay playsinilne controls muted></video>
                     </td>
                     <td>
-                        <video id="peer1-to-peer2" controls muted></video>
+                        <video id="peer1-to-peer2" autoplay playsinilne controls muted></video>
                     </td>
                 </tr>
 
@@ -321,7 +321,7 @@
 
                 function offererPeer(video_stream) {
                     offerer = new RTCPeerConnection(iceServers);
-                    offerer.id = 1;
+                    offerer.idx = 1;
 
                     video_stream.getTracks().forEach(function(track) {
                         offerer.addTrack(track, video_stream);
@@ -355,8 +355,8 @@
                         offer.sdp = preferSelectedCodec(offer.sdp);
                         offerer.setLocalDescription(offer).then(function() {
                             answererPeer(offer, video_stream);
-                        }, function() {});
-                    }, function() {});
+                        });
+                    });
                 }
             </script>
             <script>
@@ -364,7 +364,7 @@
 
                 function answererPeer(offer, video_stream) {
                     answerer = new RTCPeerConnection(iceServers);
-                    answerer.id = 2;
+                    answerer.idx = 2;
                     
                     video_stream.getTracks().forEach(function(track) {
                         answerer.addTrack(track, video_stream);
@@ -394,13 +394,14 @@
                         addIceCandidate(offerer, event.candidate);
                     };
 
-                    answerer.setRemoteDescription(offer);
-                    answerer.createAnswer(mediaConstraints).then(function (answer) {
-                        answer.sdp = preferSelectedCodec(answer.sdp);
-                        answerer.setLocalDescription(answer).then(function() {
-                            offerer.setRemoteDescription(answer);
-                        }, function() {});                        
-                    }, function() {});
+                    answerer.setRemoteDescription(offer).then(function() {
+                        answerer.createAnswer(mediaConstraints).then(function (answer) {
+                            answer.sdp = preferSelectedCodec(answer.sdp);
+                            answerer.setLocalDescription(answer).then(function() {
+                                offerer.setRemoteDescription(answer);
+                            });                        
+                        });
+                    });
                 }
             </script>
             <script>
@@ -455,9 +456,9 @@
                             result.connectionType.remote.candidateType = 'STUN';
                         }
 
-                        document.getElementById('peer' + peer.id + '-remoteIceType').innerHTML = result.connectionType.remote.candidateType;
-                        document.getElementById('peer' + peer.id + '-externalIPAddressRemote').innerHTML = result.connectionType.remote.ipAddress.join(', ');
-                        document.getElementById('peer' + peer.id + '-remoteTransport').innerHTML = result.connectionType.remote.transport.join(', ');
+                        document.getElementById('peer' + peer.idx + '-remoteIceType').innerHTML = result.connectionType.remote.candidateType;
+                        document.getElementById('peer' + peer.idx + '-externalIPAddressRemote').innerHTML = result.connectionType.remote.ipAddress.join(', ');
+                        document.getElementById('peer' + peer.idx + '-remoteTransport').innerHTML = result.connectionType.remote.transport.join(', ');
 
                         if(result.connectionType.local.candidateType.indexOf('relayed') !== -1) {
                             result.connectionType.local.candidateType = 'TURN';
@@ -465,22 +466,22 @@
                         else {
                             result.connectionType.local.candidateType = 'STUN';
                         }
-                        document.getElementById('peer' + peer.id + '-localIceType').innerHTML = result.connectionType.local.candidateType;
-                        document.getElementById('peer' + peer.id + '-externalIPAddressLocal').innerHTML = result.connectionType.local.ipAddress.join(', ');
-                        document.getElementById('peer' + peer.id + '-localTransport').innerHTML = result.connectionType.local.transport.join(', ');
+                        document.getElementById('peer' + peer.idx + '-localIceType').innerHTML = result.connectionType.local.candidateType;
+                        document.getElementById('peer' + peer.idx + '-externalIPAddressLocal').innerHTML = result.connectionType.local.ipAddress.join(', ');
+                        document.getElementById('peer' + peer.idx + '-localTransport').innerHTML = result.connectionType.local.transport.join(', ');
 
-                        document.getElementById('peer' + peer.id + '-encryptedAs').innerHTML = result.encryption;
+                        document.getElementById('peer' + peer.idx + '-encryptedAs').innerHTML = result.encryption;
 
-                        document.getElementById('peer' + peer.id + '-videoResolutionsForSenders').innerHTML = result.resolutions.send.width + 'x' + result.resolutions.send.height;
-                        document.getElementById('peer' + peer.id + '-videoResolutionsForReceivers').innerHTML = result.resolutions.recv.width + 'x' + result.resolutions.recv.height;
+                        document.getElementById('peer' + peer.idx + '-videoResolutionsForSenders').innerHTML = result.resolutions.send.width + 'x' + result.resolutions.send.height;
+                        document.getElementById('peer' + peer.idx + '-videoResolutionsForReceivers').innerHTML = result.resolutions.recv.width + 'x' + result.resolutions.recv.height;
 
-                        document.getElementById('peer' + peer.id + '-totalDataForSenders').innerHTML = bytesToSize(result.audio.bytesSent + result.video.bytesSent);
-                        document.getElementById('peer' + peer.id + '-totalDataForReceivers').innerHTML = bytesToSize(result.audio.bytesReceived + result.video.bytesReceived);
+                        document.getElementById('peer' + peer.idx + '-totalDataForSenders').innerHTML = bytesToSize(result.audio.bytesSent + result.video.bytesSent);
+                        document.getElementById('peer' + peer.idx + '-totalDataForReceivers').innerHTML = bytesToSize(result.audio.bytesReceived + result.video.bytesReceived);
 
-                        document.getElementById('peer' + peer.id + '-codecsSend').innerHTML = result.audio.send.codecs.concat(result.video.send.codecs).join(', ');
-                        document.getElementById('peer' + peer.id + '-codecsRecv').innerHTML = result.audio.recv.codecs.concat(result.video.recv.codecs).join(', ');
+                        document.getElementById('peer' + peer.idx + '-codecsSend').innerHTML = result.audio.send.codecs.concat(result.video.send.codecs).join(', ');
+                        document.getElementById('peer' + peer.idx + '-codecsRecv').innerHTML = result.audio.recv.codecs.concat(result.video.recv.codecs).join(', ');
 
-                        document.getElementById('peer' + peer.id + '-bandwidthSpeed').innerHTML = bytesToSize(result.bandwidth.speed);
+                        document.getElementById('peer' + peer.idx + '-bandwidthSpeed').innerHTML = bytesToSize(result.bandwidth.speed);
 
                         if (result.ended === true) {
                             result.nomore();

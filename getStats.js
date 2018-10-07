@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2017-11-19 4:49:44 AM UTC
+// Last time updated: 2018-01-03 10:14:08 AM UTC
 
 // _______________
 // getStats v1.0.6
@@ -189,6 +189,10 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     // following code-snippet is taken from somewhere on the github
     function getStatsWrapper(cb) {
         // if !peer or peer.signalingState == 'closed' then return;
+        if (peer.signalingState === 'closed') {
+            nomore = true;
+            return;
+        }
 
         if (typeof window.InstallTrigger !== 'undefined') {
             peer.getStats(

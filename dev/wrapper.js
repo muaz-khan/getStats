@@ -2,6 +2,10 @@
 // following code-snippet is taken from somewhere on the github
 function getStatsWrapper(cb) {
     // if !peer or peer.signalingState == 'closed' then return;
+    if (peer.signalingState === 'closed') {
+        nomore = true;
+        return;
+    }
 
     if (typeof window.InstallTrigger !== 'undefined') {
         peer.getStats(

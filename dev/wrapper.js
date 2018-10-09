@@ -1,7 +1,7 @@
 // a wrapper around getStats which hides the differences (where possible)
 // following code-snippet is taken from somewhere on the github
 function getStatsWrapper(cb) {
-    // if !peer or peer.signalingState == 'closed' then return;
+    if (!peer || peer.signalingState == 'closed') return;
 
     if (typeof window.InstallTrigger !== 'undefined') {
         peer.getStats(

@@ -7,6 +7,9 @@
     "email": "muazkh@gmail.com",
     "url": "http://www.muazkhan.com/"
   },
+  "contributors": [
+    "orangebook 1796560392@qq.com"
+  ],
   "description": "A tiny JavaScript library using WebRTC getStats API to return peer connection stats i.e. bandwidth usage, packets lost, local/remote ip addresses and ports, type of connection etc.",
   "scripts": {
     "start": "node server.js"

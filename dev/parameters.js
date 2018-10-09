@@ -1,5 +1,9 @@
 var peer = this;
 
+if (typeof arguments[0].getStats !== 'function') {
+    throw '1st argument is not exit getStats function';
+}
+
 if (arguments[0] instanceof RTCPeerConnection) {
     peer = arguments[0];
 
@@ -9,9 +13,9 @@ if (arguments[0] instanceof RTCPeerConnection) {
         interval = arguments[3];
     }
 
-    if (!(mediaStreamTrack instanceof MediaStreamTrack) && !!navigator.mozGetUserMedia) {
+    if (!!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {
         throw '2nd argument is not instance of MediaStreamTrack.';
     }
-} else if (!(mediaStreamTrack instanceof MediaStreamTrack) && !!navigator.mozGetUserMedia) {
+} else if (!!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {
     throw '1st argument is not instance of MediaStreamTrack.';
 }

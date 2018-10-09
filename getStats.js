@@ -1,9 +1,9 @@
 'use strict';
 
-// Last time updated: 2018-09-04 10:26:18 AM UTC
+// Last time updated: 2018-10-09 3:05:26 AM UTC
 
 // _______________
-// getStats v1.0.9
+// getStats v1.0.10
 
 // Open-Sourced: https://github.com/muaz-khan/getStats
 
@@ -119,6 +119,10 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
     var peer = this;
 
+    if (typeof arguments[0].getStats !== 'function') {
+        throw '1st argument is not exit getStats function';
+    }
+
     if (arguments[0] instanceof RTCPeerConnection) {
         peer = arguments[0];
 
@@ -128,10 +132,10 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             interval = arguments[3];
         }
 
-        if (!(mediaStreamTrack instanceof MediaStreamTrack) && !!navigator.mozGetUserMedia) {
+        if (!!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {
             throw '2nd argument is not instance of MediaStreamTrack.';
         }
-    } else if (!(mediaStreamTrack instanceof MediaStreamTrack) && !!navigator.mozGetUserMedia) {
+    } else if (!!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {
         throw '1st argument is not instance of MediaStreamTrack.';
     }
 
@@ -188,7 +192,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     // a wrapper around getStats which hides the differences (where possible)
     // following code-snippet is taken from somewhere on the github
     function getStatsWrapper(cb) {
-        // if !peer or peer.signalingState == 'closed' then return;
+        if (!peer || peer.signalingState == 'closed') return;
 
         if (typeof window.InstallTrigger !== 'undefined') {
             peer.getStats(

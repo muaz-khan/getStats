@@ -16,5 +16,5 @@ if (arguments[0] instanceof RTCPeerConnection) {
         console.warn('2nd argument is not instance of MediaStreamTrack.');
     }
 } else if (!!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {
-      console.warn('1st argument is not instance of MediaStreamTrack.');
+    console.warn('1st argument is not instance of MediaStreamTrack.');
 }

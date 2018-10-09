@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-09 3:05:26 AM UTC
+// Last time updated: 2018-10-09 6:28:45 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -121,9 +121,6 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
     if (typeof arguments[0].getStats !== 'function') {
         throw '1st argument is not exit getStats function';
-    }
-
-    if (arguments[0] instanceof RTCPeerConnection) {
         peer = arguments[0];
 
         if (!!navigator.mozGetUserMedia) {
@@ -131,12 +128,14 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             callback = arguments[2];
             interval = arguments[3];
         }
+    }
 
+    if (arguments[0] instanceof RTCPeerConnection) {
         if (!!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {
-            throw '2nd argument is not instance of MediaStreamTrack.';
+            console.warn('2nd argument is not instance of MediaStreamTrack.');
         }
     } else if (!!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {
-        throw '1st argument is not instance of MediaStreamTrack.';
+        console.warn('1st argument is not instance of MediaStreamTrack.');
     }
 
     var nomore = false;

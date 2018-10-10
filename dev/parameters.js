@@ -1,7 +1,6 @@
 var peer = this;
 
 if (typeof arguments[0].getStats === 'function') {
-    throw '1st argument is not exit getStats function';
     peer = arguments[0];
 
     if (!!navigator.mozGetUserMedia) {
@@ -9,6 +8,8 @@ if (typeof arguments[0].getStats === 'function') {
         callback = arguments[2];
         interval = arguments[3];
     }
+} else {
+    throw '1st argument is not exit getStats function';
 }
 
 if (arguments[0] instanceof RTCPeerConnection) {

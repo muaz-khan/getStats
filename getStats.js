@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-10 8:03:54 AM UTC
+// Last time updated: 2018-10-10 8:05:14 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -120,7 +120,6 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     var peer = this;
 
     if (typeof arguments[0].getStats === 'function') {
-        throw '1st argument is not exit getStats function';
         peer = arguments[0];
 
         if (!!navigator.mozGetUserMedia) {
@@ -128,6 +127,8 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             callback = arguments[2];
             interval = arguments[3];
         }
+    } else {
+        throw '1st argument is not exit getStats function';
     }
 
     if (arguments[0] instanceof RTCPeerConnection) {

@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-09 6:28:45 AM UTC
+// Last time updated: 2018-10-10 8:03:54 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -119,7 +119,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
     var peer = this;
 
-    if (typeof arguments[0].getStats !== 'function') {
+    if (typeof arguments[0].getStats === 'function') {
         throw '1st argument is not exit getStats function';
         peer = arguments[0];
 

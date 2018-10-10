@@ -1,6 +1,6 @@
 var peer = this;
 
-if (typeof arguments[0].getStats !== 'function') {
+if (typeof arguments[0].getStats === 'function') {
     throw '1st argument is not exit getStats function';
     peer = arguments[0];
 

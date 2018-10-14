@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-10 8:05:14 AM UTC
+// Last time updated: 2018-10-14 11:30:46 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -211,9 +211,13 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 var items = [];
                 res.result().forEach(function(res) {
                     var item = {};
-                    res.names().forEach(function(name) {
-                        item[name] = res.stat(name);
-                    });
+                    try {
+                        res.names().forEach(function(name) {
+                            item[name] = res.stat(name);
+                        });
+                    } catch (error) {
+                        console.error(error);
+                    }
                     item.id = res.id;
                     item.type = res.type;
                     item.timestamp = res.timestamp;

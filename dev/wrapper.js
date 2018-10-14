@@ -20,9 +20,13 @@ function getStatsWrapper(cb) {
             var items = [];
             res.result().forEach(function(res) {
                 var item = {};
-                res.names().forEach(function(name) {
-                    item[name] = res.stat(name);
-                });
+                try {
+                    res.names().forEach(function(name) {
+                        item[name] = res.stat(name);
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
                 item.id = res.id;
                 item.type = res.type;
                 item.timestamp = res.timestamp;

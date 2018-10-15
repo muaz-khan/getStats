@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-14 11:30:46 AM UTC
+// Last time updated: 2018-10-15 8:43:15 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -180,12 +180,13 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 getStatsResult.bandwidth.helper.videoBytesSent = getStatsResult.video.bytesSent;
             }
 
-            callback(getStatsResult);
-
-            // second argument checks to see, if target-user is still connected.
-            if (!nomore) {
-                typeof interval != undefined && interval && setTimeout(getStatsLooper, interval || 1000);
+            getStatsResult.next = function() {
+                // second argument checks to see, if target-user is still connected.
+                if (!nomore) {
+                    typeof interval != undefined && interval && setTimeout(getStatsLooper, interval || 1000);
+                }
             }
+            callback(getStatsResult);
         });
     }
 

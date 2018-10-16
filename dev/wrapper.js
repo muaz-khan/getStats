@@ -35,7 +35,6 @@ function getStatsWrapper(cb) {
                     console.dir(res, names, item);
                 } catch (error) {
                     Object.assign(item, res);
-                    console.error(error);
                 }
                 item.id = res.id;
                 item.type = res.type;

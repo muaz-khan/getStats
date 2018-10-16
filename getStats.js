@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-16 4:57:53 AM UTC
+// Last time updated: 2018-10-16 12:57:30 PM UTC
 
 // _______________
 // getStats v1.0.10
@@ -227,7 +227,6 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                         console.dir(res, names, item);
                     } catch (error) {
                         Object.assign(item, res);
-                        console.error(error);
                     }
                     item.id = res.id;
                     item.type = res.type;
@@ -373,13 +372,13 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     };
 
     getStatsParser.bweforvideo = function(result) {
-        if (result.type !== 'VideoBwe') return;
+        if (result.type !== 'VideoBwe' || result.type !== "candidate-pair") return;
 
-        getStatsResult.bandwidth.availableSendBandwidth = result.googAvailableSendBandwidth;
+        getStatsResult.bandwidth.availableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate;
 
         getStatsResult.bandwidth.googActualEncBitrate = result.googActualEncBitrate;
-        getStatsResult.bandwidth.googAvailableSendBandwidth = result.googAvailableSendBandwidth;
-        getStatsResult.bandwidth.googAvailableReceiveBandwidth = result.googAvailableReceiveBandwidth;
+        getStatsResult.bandwidth.googAvailableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate;
+        getStatsResult.bandwidth.googAvailableReceiveBandwidth = result.googAvailableReceiveBandwidth || result.availableIncomingBitrate;
         getStatsResult.bandwidth.googRetransmitBitrate = result.googRetransmitBitrate;
         getStatsResult.bandwidth.googTargetEncBitrate = result.googTargetEncBitrate;
         getStatsResult.bandwidth.googBucketDelay = result.googBucketDelay;

@@ -9,3 +9,40 @@ This directory contains all those development files.
 ## License
 
 [getStats.js](https://github.com/muaz-khan/getStats) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com/).
+
+## MOCK PeerConnection.getStats 注意点
+
+- getStats 使用callback(stats)调用
+- let result = stats.result() 返回结果格式
+```
+[
+  {timestamp, id: "googTrack_c513d0fd-7f2b-466b-8e58-a1f81860dcfc", type: "googTrack"},
+  {timestamp, id: "googLibjingleSession_5624919937048163620", type: "googLibjingleSession"},
+  {timestamp, id: "bweforvideo", type: "VideoBwe"},
+  {timestamp, id: "googCertificate_51:51:48:63:29:C5:EA:0D:DF:4D:78:1…F:0F:3F:B7:77:50:52:18:90:FD:06:7E:25:7F:4C:F1:47", type: "googCertificate"},
+  {timestamp, id: "Channel-audio-tracks-1", type: "googComponent"},
+  {timestamp, id: "Cand-F7eFbGlm", type: "localcandidate"},
+  {timestamp, id: "Cand-H1jcg4+K", type: "localcandidate"},
+  {timestamp, id: "Cand-QMdqzoWl", type: "localcandidate"},
+  {timestamp, id: "Cand-pJwrGnxA", type: "localcandidate"},
+  {timestamp, id: "Cand-jjhN8NG3", type: "localcandidate"},
+  {timestamp, id: "Cand-JOQGwM6K", type: "localcandidate"},
+  {timestamp, id: "Conn-audio-tracks-1-0", type: "googCandidatePair"},
+  {timestamp, id: "Cand-UxKUpsYK", type: "remotecandidate"},
+  {timestamp, id: "Conn-audio-tracks-1-1", type: "googCandidatePair"},
+  {timestamp, id: "Conn-audio-tracks-1-2", type: "googCandidatePair"},
+  {timestamp, id: "ssrc_1891013080_send", type: "ssrc"},
+  {timestamp, id: "ssrc_1184481036_send", type: "ssrc"},
+  {timestamp, id: "googTrack_e2f778a3-5bc3-46db-95ec-847a0019349f", type: "googTrack"},
+  {timestamp, id: "googTrack_3cbc4a2a-3193-444e-b770-0ba71524f891", type: "googTrack"},
+  {timestamp, id: "ssrc_4070233730_recv", type: "ssrc"},
+  {timestamp, id: "ssrc_3937225160_recv", type: "ssrc"},
+  {timestamp, id: "googCertificate_45:36:CB:94:01:C4:F4:50:D8:0F:A3:A8:7B:95:80:91:2D:BD:82:43", type: "googCertificate"},
+  {timestamp, id: "Cand-fF/Thv+S", type: "localcandidate"},
+  {timestamp, id: "Cand-kT0bSxwQ", type: "localcandidate"},
+]
+```
+- result[0].names() 返回数据格式
+```
+["googTrackId"]
+```

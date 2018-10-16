@@ -23,10 +23,12 @@ function getStatsWrapper(cb) {
                 var item = {};
                 try {
                     // 用于统计信息的地方，如果JsBridge没有Mock,统计将无法生效
+                    // getStats 31列信息合并后16列的信息统计
                     res.names().forEach(function(name) {
                         item[name] = res.stat(name);
                     });
                 } catch (error) {
+                    Object.assign(item, res);
                     console.error(error);
                 }
                 item.id = res.id;

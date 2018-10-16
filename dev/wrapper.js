@@ -16,11 +16,13 @@ function getStatsWrapper(cb) {
             cb
         );
     } else {
+        // 注意点，peer.getStats仅支持callback方法调用。
         peer.getStats(function(res) {
             var items = [];
             res.result().forEach(function(res) {
                 var item = {};
                 try {
+                    // 用于统计信息的地方，如果JsBridge没有Mock,统计将无法生效
                     res.names().forEach(function(name) {
                         item[name] = res.stat(name);
                     });

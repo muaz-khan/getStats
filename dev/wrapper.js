@@ -33,8 +33,8 @@ function getStatsWrapper(cb) {
                     Object.assign(item, res);
                     console.error(error);
                 }
-                console.log('RTCLegacyStatsReport','names()', 'stats()');
-                console.dir(res,names,items);
+                console.log('RTCLegacyStatsReport', 'names()', 'stats()');
+                console.dir(res, names, items);
                 item.id = res.id;
                 item.type = res.type;
                 item.timestamp = res.timestamp;

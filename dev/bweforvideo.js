@@ -7,5 +7,5 @@ getStatsParser.bweforvideo = function(result) {
     getStatsResult.bandwidth.googRetransmitBitrate = result.googRetransmitBitrate;
     getStatsResult.bandwidth.googTargetEncBitrate = result.googTargetEncBitrate;
     getStatsResult.bandwidth.googBucketDelay = result.googBucketDelay;
-    getStatsResult.bandwidth.googTransmitBitrate = result.googTransmitBitrate;
+     getStatsResult.bandwidth.googTransmitBitrate = result.googTransmitBitrate;
 };

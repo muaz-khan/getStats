@@ -26,13 +26,10 @@ function getStatsWrapper(cb) {
                 var names = null;
                 try {
                     // 用于统计信息的地方，如果JsBridge没有Mock,统计将无法生效
-                    // getStats 31列信息合并后16列的信息统计
                     names = res.names();
-                    console.log('RTCLegacyStatsReport', 'names()', 'stats()');
                     names.forEach(function(name) {
                         item[name] = res.stat(name);
                     });
-                    console.dir(res, names, item);
                 } catch (error) {
                     Object.assign(item, res);
                 }

@@ -38,13 +38,10 @@ function getStatsLooper() {
             getStatsResult.bandwidth.helper.audioBytesSent = getStatsResult.audio.bytesSent;
             getStatsResult.bandwidth.helper.videoBytesSent = getStatsResult.video.bytesSent;
         }
-
-        getStatsResult.next = function() {
-            // second argument checks to see, if target-user is still connected.
-            if (!nomore) {
-                typeof interval != undefined && interval && setTimeout(getStatsLooper, interval || 1000);
-            }
-        }
         callback(getStatsResult);
+        // second argument checks to see, if target-user is still connected.
+        if (!nomore) {
+            typeof interval != undefined && interval && setTimeout(getStatsLooper, interval || 1000);
+        }
     });
 }

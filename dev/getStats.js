@@ -5,6 +5,8 @@ function getStatsLooper() {
         results.forEach(function(result) {
             Object.keys(getStatsParser).forEach(function(key) {
                 if (typeof getStatsParser[key] === 'function') {
+                    // dispatch item to all handler,just like router,
+                    // but if need map, you show pre handle and write to result.internal[key] = map;
                     getStatsParser[key](result);
                 }
             });

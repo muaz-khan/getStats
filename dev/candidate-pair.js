@@ -24,7 +24,6 @@ getStatsParser.candidatePair = function(result) {
                 getStatsResult.connectionType.remote.transport = candidate.transport;
             }
         });
-
         getStatsResult.connectionType.transport = result.googTransportType;
 
         var localCandidate = getStatsResult.internal.candidates[result.localCandidateId];

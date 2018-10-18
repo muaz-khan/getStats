@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-18 8:07:27 AM UTC
+// Last time updated: 2018-10-18 9:59:57 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -118,7 +118,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     };
 
     function preHandler(result) {
-        // 根据codeId\trackId映射
+        // 根据codeId\trackId映射 - 处理关联关系
         var idMap = result.reduce(function(map, item) {
             if (item.type != 'codec' && item.type != 'track') return map;
             map[item.id] = item;
@@ -126,6 +126,18 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }, {});
 
         return result.reduce(function(sum, item) {
+            // 兼容candidate相关参数 - 处理字段兼容，转义
+            if (item.type.indexof('candidate') >= 0) {
+                if (item.ip) {
+                    item.ipAddress = item.ip;
+                }
+                if (item.protocol) {
+                    item.googTransportType = item.protocol;
+                }
+                if (item.state) {
+                    item.googActiveConnection = item.state == 'succeeded';
+                }
+            };
             if (item.type != 'outbound-rtp' && item.type != 'inbound-rtp') {
                 sum.push(item);
                 return sum;
@@ -398,14 +410,15 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
     getStatsParser.bweforvideo = function(result) {
         if (result.type !== 'VideoBwe' && result.type !== "candidate-pair") return;
-        getStatsResult.bandwidth.availableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate;
+        getStatsResult.bandwidth.availableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate || 0;
         getStatsResult.bandwidth.googActualEncBitrate = result.googActualEncBitrate;
-        getStatsResult.bandwidth.googAvailableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate;
-        getStatsResult.bandwidth.googAvailableReceiveBandwidth = result.googAvailableReceiveBandwidth || result.availableIncomingBitrate;
+        getStatsResult.bandwidth.googAvailableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate || 0;
+        getStatsResult.bandwidth.googAvailableReceiveBandwidth = result.googAvailableReceiveBandwidth || result.availableIncomingBitrate || 0;
         getStatsResult.bandwidth.googRetransmitBitrate = result.googRetransmitBitrate;
         getStatsResult.bandwidth.googTargetEncBitrate = result.googTargetEncBitrate;
         getStatsResult.bandwidth.googBucketDelay = result.googBucketDelay;
-        getStatsResult.bandwidth.googTransmitBitrate = result.googTransmitBitrate;
+        // 实际传输的比特率
+        getStatsResult.bandwidth.googTransmitBitrate = result.googTransmitBitrate || 0;
     };
 
     getStatsParser.candidatePair = function(result) {
@@ -434,7 +447,6 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                     getStatsResult.connectionType.remote.transport = candidate.transport;
                 }
             });
-
             getStatsResult.connectionType.transport = result.googTransportType;
 
             var localCandidate = getStatsResult.internal.candidates[result.localCandidateId];

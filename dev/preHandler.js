@@ -1,5 +1,5 @@
 function preHandler(result) {
-    // 根据codeId\trackId映射
+    // 根据codeId\trackId映射 - 处理关联关系
     var idMap = result.reduce(function(map, item) {
         if (item.type != 'codec' && item.type != 'track') return map;
         map[item.id] = item;
@@ -7,6 +7,18 @@ function preHandler(result) {
     }, {});
 
     return result.reduce(function(sum, item) {
+        // 兼容candidate相关参数 - 处理字段兼容，转义
+        if (item.type.indexof('candidate') >= 0) {
+            if (item.ip) {
+                item.ipAddress = item.ip;
+            }
+            if (item.protocol) {
+                item.googTransportType = item.protocol;
+            }
+            if (item.state) {
+                item.googActiveConnection = item.state == 'succeeded';
+            }
+        };
         if (item.type != 'outbound-rtp' && item.type != 'inbound-rtp') {
             sum.push(item);
             return sum;

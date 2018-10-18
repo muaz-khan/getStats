@@ -1,11 +1,6 @@
-/**
- * @description 合并out-bound/in-bound相关的track\codec信息
- * @param {*} result
- * @returns
- */
 function preHandler(result) {
     // 根据codeId\trackId映射
-    let idMap = result.reduce(function(map, item) {
+    var idMap = result.reduce(function(map, item) {
         if (item.type != 'codec' && item.type != 'track') return map;
         return map[item.id] = item;
     }, {});

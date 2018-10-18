@@ -37,6 +37,7 @@ module.exports = function(grunt) {
                 src: [
                     'dev/head.js',
                     'dev/globals.js',
+                    'dev/preHandler.js',
                     'dev/parameters.js',
                     'dev/getStats.js',
                     'dev/wrapper.js',

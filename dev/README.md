@@ -6,9 +6,7 @@ This directory contains all those development files.
 
 `grunt` tools are used to concatenate/merge all these files into `~/getStats.js`.
 
-## License
-
-[getStats.js](https://github.com/muaz-khan/getStats) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com/).
+> Shoud use es5 , beacuse not config babel
 
 ## MOCK PeerConnection.getStats 注意点
 
@@ -46,3 +44,6 @@ This directory contains all those development files.
 ```
 ["googTrackId"]
 ```
+
+## License
+[getStats.js](https://github.com/muaz-khan/getStats) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com/).

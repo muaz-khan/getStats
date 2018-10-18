@@ -39,6 +39,7 @@ function getStatsWrapper(cb) {
                 items.push(item);
             });
             console.log('items', items);
+            var items = preHandler(items);
             cb(items);
         });
     }

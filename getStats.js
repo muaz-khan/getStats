@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-16 12:57:30 PM UTC
+// Last time updated: 2018-10-18 3:05:36 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -146,6 +146,8 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             results.forEach(function(result) {
                 Object.keys(getStatsParser).forEach(function(key) {
                     if (typeof getStatsParser[key] === 'function') {
+                        // dispatch item to all handler,just like router,
+                        // but if need map, you show pre handle and write to result.internal[key] = map;
                         getStatsParser[key](result);
                     }
                 });
@@ -179,14 +181,11 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 getStatsResult.bandwidth.helper.audioBytesSent = getStatsResult.audio.bytesSent;
                 getStatsResult.bandwidth.helper.videoBytesSent = getStatsResult.video.bytesSent;
             }
-
-            getStatsResult.next = function() {
-                // second argument checks to see, if target-user is still connected.
-                if (!nomore) {
-                    typeof interval != undefined && interval && setTimeout(getStatsLooper, interval || 1000);
-                }
-            }
             callback(getStatsResult);
+            // second argument checks to see, if target-user is still connected.
+            if (!nomore) {
+                typeof interval != undefined && interval && setTimeout(getStatsLooper, interval || 1000);
+            }
         });
     }
 
@@ -218,13 +217,10 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                     var names = null;
                     try {
                         // 用于统计信息的地方，如果JsBridge没有Mock,统计将无法生效
-                        // getStats 31列信息合并后16列的信息统计
                         names = res.names();
-                        console.log('RTCLegacyStatsReport', 'names()', 'stats()');
                         names.forEach(function(name) {
                             item[name] = res.stat(name);
                         });
-                        console.dir(res, names, item);
                     } catch (error) {
                         Object.assign(item, res);
                     }
@@ -234,6 +230,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                     items.push(item);
                 });
                 console.log('items', items);
+                var items = preHandler(items);
                 cb(items);
             });
         }
@@ -373,9 +370,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
     getStatsParser.bweforvideo = function(result) {
         if (result.type !== 'VideoBwe' || result.type !== "candidate-pair") return;
-
         getStatsResult.bandwidth.availableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate;
-
         getStatsResult.bandwidth.googActualEncBitrate = result.googActualEncBitrate;
         getStatsResult.bandwidth.googAvailableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate;
         getStatsResult.bandwidth.googAvailableReceiveBandwidth = result.googAvailableReceiveBandwidth || result.availableIncomingBitrate;

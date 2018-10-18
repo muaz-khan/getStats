@@ -7,10 +7,15 @@ function preHandler(result) {
     }, {});
 
     return result.reduce(function(sum, item) {
-        if (item.type != 'outbound-rtp' && item.type != 'inbound-rtp') return sum;
-        Object.assign(item, idMap[item.codecId]);
-        Object.assign(item, idMap[item.trackId]);
+        if (item.type != 'outbound-rtp' && item.type != 'inbound-rtp') {
+            sum.push(item);
+            return sum;
+        }
+        item = Object.assign(item, idMap[item.codecId], idMap[item.trackId]);
+        if (item.mimeType) {
+            item.googCodecName = item.mimeType.split('/')[1];
+        }
         sum.push(item);
-        return sum
+        return sum;
     }, []);
 }

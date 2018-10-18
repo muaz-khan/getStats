@@ -31,7 +31,7 @@ function getStatsWrapper(cb) {
                         item[name] = res.stat(name);
                     });
                 } catch (error) {
-                    Object.assign(item, res);
+                    item = Object.assign(item, res);
                 }
                 item.id = res.id;
                 item.type = res.type;

@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-18 7:58:04 AM UTC
+// Last time updated: 2018-10-18 8:07:27 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -397,7 +397,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     };
 
     getStatsParser.bweforvideo = function(result) {
-        if (result.type !== 'VideoBwe' || result.type !== "candidate-pair") return;
+        if (result.type !== 'VideoBwe' && result.type !== "candidate-pair") return;
         getStatsResult.bandwidth.availableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate;
         getStatsResult.bandwidth.googActualEncBitrate = result.googActualEncBitrate;
         getStatsResult.bandwidth.googAvailableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate;

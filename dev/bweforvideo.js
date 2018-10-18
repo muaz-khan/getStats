@@ -1,5 +1,5 @@
 getStatsParser.bweforvideo = function(result) {
-    if (result.type !== 'VideoBwe' || result.type !== "candidate-pair") return;
+    if (result.type !== 'VideoBwe' && result.type !== "candidate-pair") return;
     getStatsResult.bandwidth.availableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate;
     getStatsResult.bandwidth.googActualEncBitrate = result.googActualEncBitrate;
     getStatsResult.bandwidth.googAvailableSendBandwidth = result.googAvailableSendBandwidth || result.availableOutgoingBitrate;

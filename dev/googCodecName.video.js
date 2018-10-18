@@ -8,7 +8,10 @@ getStatsParser.checkVideoTracks = function(result) {
     // googCurrentDelayMs, googRenderDelayMs, googTargetDelayMs
     // transportId === 'Channel-audio-1'
     var sendrecvType = result.id.split('_').pop();
-
+    // check sendrecvType
+    if (sendrecvType != 'recv' && sendrecvType != 'send') {
+        sendrecvType = result.isRemote ? 'recv' : 'send';
+    }
     if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName) === -1) {
         getStatsResult.video[sendrecvType].codecs.push(result.googCodecName);
     }

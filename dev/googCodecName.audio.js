@@ -6,7 +6,10 @@ getStatsParser.checkAudioTracks = function(result) {
     if (AUDIO_codecs.indexOf(result.googCodecName.toLowerCase()) === -1) return;
 
     var sendrecvType = result.id.split('_').pop();
-
+    // check sendrecvType
+    if (sendrecvType != 'recv' && sendrecvType != 'send') {
+        sendrecvType = result.isRemote ? 'recv' : 'send';
+    }
     if (getStatsResult.audio[sendrecvType].codecs.indexOf(result.googCodecName) === -1) {
         getStatsResult.audio[sendrecvType].codecs.push(result.googCodecName);
     }

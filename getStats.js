@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-18 7:11:47 AM UTC
+// Last time updated: 2018-10-18 7:58:04 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -280,7 +280,10 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         if (AUDIO_codecs.indexOf(result.googCodecName.toLowerCase()) === -1) return;
 
         var sendrecvType = result.id.split('_').pop();
-
+        // check sendrecvType
+        if (sendrecvType != 'recv' && sendrecvType != 'send') {
+            sendrecvType = result.isRemote ? 'recv' : 'send';
+        }
         if (getStatsResult.audio[sendrecvType].codecs.indexOf(result.googCodecName) === -1) {
             getStatsResult.audio[sendrecvType].codecs.push(result.googCodecName);
         }
@@ -332,7 +335,10 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         // googCurrentDelayMs, googRenderDelayMs, googTargetDelayMs
         // transportId === 'Channel-audio-1'
         var sendrecvType = result.id.split('_').pop();
-
+        // check sendrecvType
+        if (sendrecvType != 'recv' && sendrecvType != 'send') {
+            sendrecvType = result.isRemote ? 'recv' : 'send';
+        }
         if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName) === -1) {
             getStatsResult.video[sendrecvType].codecs.push(result.googCodecName);
         }
@@ -602,7 +608,10 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         if (!result.googCodecName || (result.mediaType !== 'video' && result.mediaType !== 'audio')) return;
         if (result.type !== 'ssrc') return;
         var sendrecvType = result.id.split('_').pop();
-
+        // check sendrecvType
+        if (sendrecvType != 'recv' && sendrecvType != 'send') {
+            sendrecvType = result.isRemote ? 'recv' : 'send';
+        }
         if (SSRC[result.mediaType][sendrecvType].indexOf(result.ssrc) === -1) {
             SSRC[result.mediaType][sendrecvType].push(result.ssrc)
         }

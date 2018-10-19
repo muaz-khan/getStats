@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-19 6:38:42 AM UTC
+// Last time updated: 2018-10-19 7:02:50 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -139,7 +139,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                     item.googTransportType = item.protocol;
                 }
                 if (item.state) {
-                    item.googActiveConnection = item.state == 'succeeded';
+                    item.googActiveConnection = (item.state == 'succeeded').toString();
                 }
                 if (item.port) {
                     item.portNumber = item.port;

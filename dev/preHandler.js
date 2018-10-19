@@ -26,7 +26,8 @@ function preHandler(result) {
                 item.portNumber = item.port;
             }
         };
-        item = Object.assign(item, idMap[item.transportId], idMap[item.codecId], idMap[item.trackId]);
+        // item.type can't change
+        item = Object.assign({}, idMap[item.transportId], idMap[item.codecId], idMap[item.trackId], item);
         if (item.mimeType) {
             item.googCodecName = item.mimeType.split('/')[1];
         }

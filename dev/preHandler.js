@@ -20,7 +20,7 @@ function preHandler(result) {
                 item.googTransportType = item.protocol;
             }
             if (item.state) {
-                item.googActiveConnection = item.state == 'succeeded';
+                item.googActiveConnection = (item.state == 'succeeded').toString();
             }
             if (item.port) {
                 item.portNumber = item.port;

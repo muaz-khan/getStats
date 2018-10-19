@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-19 7:15:23 AM UTC
+// Last time updated: 2018-10-19 8:28:24 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -62,7 +62,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             encodedPerSecond: 0,
             helper: {
                 audioBytesSent: 0,
-                videoBytestSent: 0
+                videoBytesSent: 0
             },
             speed: 0
         },
@@ -370,6 +370,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
 
             kilobytes = bytes / 1024;
+            getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
         }
 
         if (!!result.bytesReceived) {
@@ -382,9 +383,8 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
 
             kilobytes = bytes / 1024;
+            getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
         }
-
-        getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
 
         if (!!result.packetsLost) {
             var kilolostPackets = 0;

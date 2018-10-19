@@ -27,6 +27,7 @@ getStatsParser.checkVideoTracks = function(result) {
         getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
 
         kilobytes = bytes / 1024;
+        getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
     }
 
     if (!!result.bytesReceived) {
@@ -39,9 +40,8 @@ getStatsParser.checkVideoTracks = function(result) {
         getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
 
         kilobytes = bytes / 1024;
+        getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
     }
-
-    getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
 
     if (!!result.packetsLost) {
         var kilolostPackets = 0;

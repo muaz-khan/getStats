@@ -45,5 +45,32 @@ This directory contains all those development files.
 ["googTrackId"]
 ```
 
+## webrtc-getstats-rfc VideoBew
+> not exit in stand getstats rfc.
+```
+googAvailableReceiveBandwidth—对于接收视频数据可用的带宽。  
+
+googAvailableSendBandwidth—对于发送视频数据可用的带宽。 
+
+googTargetEncBitrate—视频编码器的目标比特率。这项指标会尝试填满可用的带宽。
+
+googActualEncBitrate—视频编码器输出的比特率。通常这与目标比特率是匹配的。
+
+googTansmitBitrate—这个比特率是实际传输的比特率。如果此数值与实际编码比特率有较大的差别，那么可能是因为前向错误纠正造成的。
+
+googRetransmitBitrate—如果RTX被使用的话，这项允许测量重传的比特率。此数据通常代表丢包率。
+
+googBucketDelay—是Google为了处理大框架速率的策略表示。通常是很小的数值。 
+```
+
+so there has a map
+```javascript
+{
+  googAvailableReceiveBandwidth: availableIncomingBitrate,
+  googAvailableSendBandwidth: availableOutgoingBitrate,
+  googTansmitBitrate: videBitrate + audioBitrate || (candidate.bytesSent - candidate.preBytesSent), // Pseudo code
+}
+
+```
 ## License
 [getStats.js](https://github.com/muaz-khan/getStats) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com/).

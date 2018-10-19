@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-19 2:58:31 AM UTC
+// Last time updated: 2018-10-19 3:23:47 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -136,6 +136,9 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 }
                 if (item.state) {
                     item.googActiveConnection = item.state == 'succeeded';
+                }
+                if (item.port) {
+                    item.portNumber = item.port;
                 }
             };
             if (item.type != 'outbound-rtp' && item.type != 'inbound-rtp' && item.type.indexof('candidate') < 0) {
@@ -430,8 +433,17 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             // id === 'Conn-audio-1-0'
             // localCandidateId, remoteCandidateId
 
-            // bytesSent, bytesReceived
-
+            // 实际传输的比特率 bytesSent, bytesReceived - 标准的getStats不支持VideoBwe
+            if (result.bytesSent) {
+                var kilobytes = 0;
+                if (!!getStatsResult.internal.preCandidateBytesSent) {
+                    getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
+                }
+                var bytes = result.bytesSent - getStatsResult.internal.preCandidateBytesSent;
+                getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
+                kilobytes = bytes / 1024;
+                getStatsResult.bandwidth.candidateTransmitBitrate = kilobytes;
+            }
             Object.keys(getStatsResult.internal.candidates).forEach(function(cid) {
                 var candidate = getStatsResult.internal.candidates[cid];
                 if (candidate.ipAddress.indexOf(result.googLocalAddress) !== -1) {
@@ -454,6 +466,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 if (localCandidate.ipAddress) {
                     getStatsResult.connectionType.systemIpAddress = localCandidate.ipAddress;
                 }
+
             }
 
             var remoteCandidate = getStatsResult.internal.candidates[result.remoteCandidateId];

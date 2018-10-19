@@ -41,8 +41,8 @@ getStatsParser.candidatePair = function(result) {
         }
     }
 
-    if (result.type === 'candidate-pair') {
-        if (result.selected === true && result.nominated === true && result.state === 'succeeded') {
+    if (result.type === 'transport' || result.type === 'googComponent') {
+        if (!!result.selectedCandidatePairId || result.nominated === true && result.state === 'succeeded') {
             // remoteCandidateId, localCandidateId, componentId
             var localCandidate = getStatsResult.internal.candidates[result.remoteCandidateId];
             var remoteCandidate = getStatsResult.internal.candidates[result.remoteCandidateId];

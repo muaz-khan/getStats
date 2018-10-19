@@ -17,30 +17,24 @@ getStatsParser.checkVideoTracks = function(result) {
     }
 
     if (!!result.bytesSent) {
-        var kilobytes = 0;
+        var bytes = 0;
         // 若刷新呀SDP重新交换，需要重新计算
         if (!getStatsResult.internal.video[sendrecvType].prevBytesSent || getStatsResult.internal.video[sendrecvType].prevBytesSent > result.bytesSent) {
             getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
         }
-
-        var bytes = result.bytesSent - getStatsResult.internal.video[sendrecvType].prevBytesSent;
+        bytes = result.bytesSent - getStatsResult.internal.video[sendrecvType].prevBytesSent;
         getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
-
-        kilobytes = bytes / 1024;
-        getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+        getStatsResult.video[sendrecvType].availableBandwidth = bytes;
     }
 
     if (!!result.bytesReceived) {
-        var kilobytes = 0;
+        var bytes = 0;
         if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived || getStatsResult.internal.video[sendrecvType].prevBytesReceived > result.bytesReceived) {
             getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
         }
-
-        var bytes = result.bytesReceived - getStatsResult.internal.video[sendrecvType].prevBytesReceived;
+        bytes = result.bytesReceived - getStatsResult.internal.video[sendrecvType].prevBytesReceived;
         getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
-
-        kilobytes = bytes / 1024;
-        getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+        getStatsResult.video[sendrecvType].availableBandwidth = bytes;
     }
 
     if (!!result.packetsLost) {

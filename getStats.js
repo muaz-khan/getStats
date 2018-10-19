@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-19 8:28:24 AM UTC
+// Last time updated: 2018-10-19 9:08:18 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -106,6 +106,19 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         },
         nomore: function() {
             nomore = true;
+        },
+        bytesToSize: function(bytes) {
+            var k = 1000;
+            var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            if (bytes <= 0) {
+                return '0 Bytes';
+            }
+            var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
+
+            if (!sizes[i]) {
+                return '0 Bytes';
+            }
+            return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
         }
     };
 
@@ -305,35 +318,29 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }
 
         if (result.bytesSent) {
-            var kilobytes = 0;
+            var bytes = 0;
             if (!!result.bytesSent) {
                 if (!getStatsResult.internal.audio[sendrecvType].prevBytesSent) {
                     getStatsResult.internal.audio[sendrecvType].prevBytesSent = result.bytesSent;
                 }
 
-                var bytes = result.bytesSent - getStatsResult.internal.audio[sendrecvType].prevBytesSent;
+                bytes = result.bytesSent - getStatsResult.internal.audio[sendrecvType].prevBytesSent;
                 getStatsResult.internal.audio[sendrecvType].prevBytesSent = result.bytesSent;
-
-                kilobytes = bytes / 1024;
             }
-
-            getStatsResult.audio[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.audio[sendrecvType].availableBandwidth = bytes;
         }
 
         if (result.bytesReceived) {
-            var kilobytes = 0;
+            var bytes = 0;
             if (!!result.bytesReceived) {
                 if (!getStatsResult.internal.audio[sendrecvType].prevBytesReceived) {
                     getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
                 }
 
-                var bytes = result.bytesReceived - getStatsResult.internal.audio[sendrecvType].prevBytesReceived;
+                bytes = result.bytesReceived - getStatsResult.internal.audio[sendrecvType].prevBytesReceived;
                 getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
-
-                kilobytes = bytes / 1024;
             }
-
-            getStatsResult.audio[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.audio[sendrecvType].availableBandwidth = bytes;
         }
 
         if (getStatsResult.audio[sendrecvType].tracks.indexOf(result.googTrackId) === -1) {
@@ -360,30 +367,24 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }
 
         if (!!result.bytesSent) {
-            var kilobytes = 0;
+            var bytes = 0;
             // 若刷新呀SDP重新交换，需要重新计算
             if (!getStatsResult.internal.video[sendrecvType].prevBytesSent || getStatsResult.internal.video[sendrecvType].prevBytesSent > result.bytesSent) {
                 getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
             }
-
-            var bytes = result.bytesSent - getStatsResult.internal.video[sendrecvType].prevBytesSent;
+            bytes = result.bytesSent - getStatsResult.internal.video[sendrecvType].prevBytesSent;
             getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
-
-            kilobytes = bytes / 1024;
-            getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.video[sendrecvType].availableBandwidth = bytes;
         }
 
         if (!!result.bytesReceived) {
-            var kilobytes = 0;
+            var bytes = 0;
             if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived || getStatsResult.internal.video[sendrecvType].prevBytesReceived > result.bytesReceived) {
                 getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
             }
-
-            var bytes = result.bytesReceived - getStatsResult.internal.video[sendrecvType].prevBytesReceived;
+            bytes = result.bytesReceived - getStatsResult.internal.video[sendrecvType].prevBytesReceived;
             getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
-
-            kilobytes = bytes / 1024;
-            getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.video[sendrecvType].availableBandwidth = bytes;
         }
 
         if (!!result.packetsLost) {
@@ -436,14 +437,12 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
             // 实际传输的比特率 bytesSent, bytesReceived - 标准的getStats不支持VideoBwe
             if (result.bytesSent) {
-                var kilobytes = 0;
                 if (!getStatsResult.internal.preCandidateBytesSent) {
                     getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
                 }
                 var bytes = result.bytesSent - getStatsResult.internal.preCandidateBytesSent;
                 getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
-                kilobytes = bytes / 1024;
-                getStatsResult.bandwidth.candidateTransmitBitrate = kilobytes;
+                getStatsResult.bandwidth.candidateTransmitBitrate = bytes;
             }
             Object.keys(getStatsResult.internal.candidates).forEach(function(cid) {
                 var candidate = getStatsResult.internal.candidates[cid];

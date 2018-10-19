@@ -9,14 +9,12 @@ getStatsParser.candidatePair = function(result) {
 
         // 实际传输的比特率 bytesSent, bytesReceived - 标准的getStats不支持VideoBwe
         if (result.bytesSent) {
-            var kilobytes = 0;
             if (!getStatsResult.internal.preCandidateBytesSent) {
                 getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
             }
             var bytes = result.bytesSent - getStatsResult.internal.preCandidateBytesSent;
             getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
-            kilobytes = bytes / 1024;
-            getStatsResult.bandwidth.candidateTransmitBitrate = kilobytes;
+            getStatsResult.bandwidth.candidateTransmitBitrate = bytes;
         }
         Object.keys(getStatsResult.internal.candidates).forEach(function(cid) {
             var candidate = getStatsResult.internal.candidates[cid];

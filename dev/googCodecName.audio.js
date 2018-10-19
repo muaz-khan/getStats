@@ -15,35 +15,29 @@ getStatsParser.checkAudioTracks = function(result) {
     }
 
     if (result.bytesSent) {
-        var kilobytes = 0;
+        var bytes = 0;
         if (!!result.bytesSent) {
             if (!getStatsResult.internal.audio[sendrecvType].prevBytesSent) {
                 getStatsResult.internal.audio[sendrecvType].prevBytesSent = result.bytesSent;
             }
 
-            var bytes = result.bytesSent - getStatsResult.internal.audio[sendrecvType].prevBytesSent;
+            bytes = result.bytesSent - getStatsResult.internal.audio[sendrecvType].prevBytesSent;
             getStatsResult.internal.audio[sendrecvType].prevBytesSent = result.bytesSent;
-
-            kilobytes = bytes / 1024;
         }
-
-        getStatsResult.audio[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+        getStatsResult.audio[sendrecvType].availableBandwidth = bytes;
     }
 
     if (result.bytesReceived) {
-        var kilobytes = 0;
+        var bytes = 0;
         if (!!result.bytesReceived) {
             if (!getStatsResult.internal.audio[sendrecvType].prevBytesReceived) {
                 getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
             }
 
-            var bytes = result.bytesReceived - getStatsResult.internal.audio[sendrecvType].prevBytesReceived;
+            bytes = result.bytesReceived - getStatsResult.internal.audio[sendrecvType].prevBytesReceived;
             getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
-
-            kilobytes = bytes / 1024;
         }
-
-        getStatsResult.audio[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+        getStatsResult.audio[sendrecvType].availableBandwidth = bytes;
     }
 
     if (getStatsResult.audio[sendrecvType].tracks.indexOf(result.googTrackId) === -1) {

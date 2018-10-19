@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-19 7:02:50 AM UTC
+// Last time updated: 2018-10-19 7:15:23 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -437,7 +437,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             // 实际传输的比特率 bytesSent, bytesReceived - 标准的getStats不支持VideoBwe
             if (result.bytesSent) {
                 var kilobytes = 0;
-                if (!!getStatsResult.internal.preCandidateBytesSent) {
+                if (!getStatsResult.internal.preCandidateBytesSent) {
                     getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
                 }
                 var bytes = result.bytesSent - getStatsResult.internal.preCandidateBytesSent;

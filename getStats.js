@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-19 9:17:06 AM UTC
+// Last time updated: 2018-10-19 9:41:01 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -229,6 +229,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
             if (getStatsResult.audio && getStatsResult.video) {
                 getStatsResult.bandwidth.speed = (getStatsResult.audio.bytesSent - getStatsResult.bandwidth.helper.audioBytesSent) + (getStatsResult.video.bytesSent - getStatsResult.bandwidth.helper.videoBytesSent);
+                // getStatsResult.bandwidth.down = (getStatsResult.audio.bytesReceived - getStatsResult.bandwidth.helper.audioBytesSent) + (getStatsResult.video.bytesReceived - getStatsResult.bandwidth.helper.videoBytesSent);
                 getStatsResult.bandwidth.helper.audioBytesSent = getStatsResult.audio.bytesSent;
                 getStatsResult.bandwidth.helper.videoBytesSent = getStatsResult.video.bytesSent;
             }
@@ -330,17 +331,18 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             getStatsResult.audio[sendrecvType].availableBandwidth = bytes;
         }
 
+        // 当参数合并后，根据 bytesReceived 来判断recv/send
         if (result.bytesReceived) {
             var bytes = 0;
             if (!!result.bytesReceived) {
-                if (!getStatsResult.internal.audio[sendrecvType].prevBytesReceived) {
-                    getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
+                if (!getStatsResult.internal.audio['recv'].prevBytesReceived) {
+                    getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
                 }
 
-                bytes = result.bytesReceived - getStatsResult.internal.audio[sendrecvType].prevBytesReceived;
-                getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
+                bytes = result.bytesReceived - getStatsResult.internal.audio['recv'].prevBytesReceived;
+                getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
             }
-            getStatsResult.audio[sendrecvType].availableBandwidth = bytes;
+            getStatsResult.audio['recv'].availableBandwidth = bytes;
         }
 
         if (getStatsResult.audio[sendrecvType].tracks.indexOf(result.googTrackId) === -1) {
@@ -377,25 +379,25 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             getStatsResult.video[sendrecvType].availableBandwidth = bytes;
         }
 
+        // 当参数合并后，根据 bytesReceived 来判断recv/send
         if (!!result.bytesReceived) {
             var bytes = 0;
-            if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived || getStatsResult.internal.video[sendrecvType].prevBytesReceived > result.bytesReceived) {
-                getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
+            if (!getStatsResult.internal.video['recv'].prevBytesReceived || getStatsResult.internal.video['recv'].prevBytesReceived > result.bytesReceived) {
+                getStatsResult.internal.video['recv'].prevBytesReceived = result.bytesReceived;
             }
-            bytes = result.bytesReceived - getStatsResult.internal.video[sendrecvType].prevBytesReceived;
-            getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
-            getStatsResult.video[sendrecvType].availableBandwidth = bytes;
+            bytes = result.bytesReceived - getStatsResult.internal.video['recv'].prevBytesReceived;
+            getStatsResult.internal.video['recv'].prevBytesReceived = result.bytesReceived;
+            getStatsResult.video['recv'].availableBandwidth = bytes;
         }
 
+        // 当参数合并后，根据 bytesReceived 来判断recv/send
         if (!!result.packetsLost) {
-            var kilolostPackets = 0;
-
-            if (!getStatsResult.internal.video[sendrecvType].prevLostPacket) {
-                getStatsResult.internal.video[sendrecvType].prevLostPacket = result.packetsLost;
+            if (!getStatsResult.internal.video['recv'].prevLostPacket) {
+                getStatsResult.internal.video['recv'].prevLostPacket = result.packetsLost;
             }
             var bytes = getStatsResult.internal.video['recv'].prevBytesReceived;
-            var packets = result.packetsLost - getStatsResult.internal.video[sendrecvType].prevLostPacket;
-            getStatsResult.video[sendrecvType].packetsLostRate = bytes != 0 ? Math.round((packets / bytes) * 100) / 100 + "%" : '0.00%';
+            var packets = result.packetsLost - getStatsResult.internal.video['recv'].prevLostPacket;
+            getStatsResult.video['recv'].packetsLostRate = bytes != 0 ? Math.round((packets / bytes) * 100) / 100 + "%" : '0.00%';
         }
         if (result.googFrameHeightReceived && result.googFrameWidthReceived) {
             getStatsResult.resolutions[sendrecvType].width = result.googFrameWidthReceived;

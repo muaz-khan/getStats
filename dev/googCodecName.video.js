@@ -28,7 +28,7 @@ getStatsParser.checkVideoTracks = function(result) {
     }
 
     // 当参数合并后，根据 bytesReceived 来判断recv/send
-    if (!!result.bytesReceived) {
+    if (!!result.bytesReceived && result.bytesReceived !== '0') {
         var bytes = 0;
         if (!getStatsResult.internal.video['recv'].prevBytesReceived || getStatsResult.internal.video['recv'].prevBytesReceived > result.bytesReceived) {
             getStatsResult.internal.video['recv'].prevBytesReceived = result.bytesReceived;

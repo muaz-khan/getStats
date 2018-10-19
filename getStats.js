@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-19 9:41:01 AM UTC
+// Last time updated: 2018-10-19 11:13:46 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -332,16 +332,13 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }
 
         // 当参数合并后，根据 bytesReceived 来判断recv/send
-        if (result.bytesReceived) {
-            var bytes = 0;
-            if (!!result.bytesReceived) {
-                if (!getStatsResult.internal.audio['recv'].prevBytesReceived) {
-                    getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
-                }
-
-                bytes = result.bytesReceived - getStatsResult.internal.audio['recv'].prevBytesReceived;
+        if (result.bytesReceived && result.bytesReceived !== '0') {
+            if (!getStatsResult.internal.audio['recv'].prevBytesReceived) {
                 getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
             }
+
+            var bytes = result.bytesReceived - getStatsResult.internal.audio['recv'].prevBytesReceived;
+            getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
             getStatsResult.audio['recv'].availableBandwidth = bytes;
         }
 
@@ -380,7 +377,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }
 
         // 当参数合并后，根据 bytesReceived 来判断recv/send
-        if (!!result.bytesReceived) {
+        if (!!result.bytesReceived && result.bytesReceived !== '0') {
             var bytes = 0;
             if (!getStatsResult.internal.video['recv'].prevBytesReceived || getStatsResult.internal.video['recv'].prevBytesReceived > result.bytesReceived) {
                 getStatsResult.internal.video['recv'].prevBytesReceived = result.bytesReceived;

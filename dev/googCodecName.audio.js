@@ -28,16 +28,13 @@ getStatsParser.checkAudioTracks = function(result) {
     }
 
     // 当参数合并后，根据 bytesReceived 来判断recv/send
-    if (result.bytesReceived) {
-        var bytes = 0;
-        if (!!result.bytesReceived) {
-            if (!getStatsResult.internal.audio['recv'].prevBytesReceived) {
-                getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
-            }
-
-            bytes = result.bytesReceived - getStatsResult.internal.audio['recv'].prevBytesReceived;
+    if (result.bytesReceived && result.bytesReceived !== '0') {
+        if (!getStatsResult.internal.audio['recv'].prevBytesReceived) {
             getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
         }
+
+        var bytes = result.bytesReceived - getStatsResult.internal.audio['recv'].prevBytesReceived;
+        getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
         getStatsResult.audio['recv'].availableBandwidth = bytes;
     }
 

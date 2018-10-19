@@ -27,17 +27,18 @@ getStatsParser.checkAudioTracks = function(result) {
         getStatsResult.audio[sendrecvType].availableBandwidth = bytes;
     }
 
+    // 当参数合并后，根据 bytesReceived 来判断recv/send
     if (result.bytesReceived) {
         var bytes = 0;
         if (!!result.bytesReceived) {
-            if (!getStatsResult.internal.audio[sendrecvType].prevBytesReceived) {
-                getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
+            if (!getStatsResult.internal.audio['recv'].prevBytesReceived) {
+                getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
             }
 
-            bytes = result.bytesReceived - getStatsResult.internal.audio[sendrecvType].prevBytesReceived;
-            getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
+            bytes = result.bytesReceived - getStatsResult.internal.audio['recv'].prevBytesReceived;
+            getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
         }
-        getStatsResult.audio[sendrecvType].availableBandwidth = bytes;
+        getStatsResult.audio['recv'].availableBandwidth = bytes;
     }
 
     if (getStatsResult.audio[sendrecvType].tracks.indexOf(result.googTrackId) === -1) {

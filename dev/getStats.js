@@ -37,6 +37,7 @@ function getStatsLooper() {
 
         if (getStatsResult.audio && getStatsResult.video) {
             getStatsResult.bandwidth.speed = (getStatsResult.audio.bytesSent - getStatsResult.bandwidth.helper.audioBytesSent) + (getStatsResult.video.bytesSent - getStatsResult.bandwidth.helper.videoBytesSent);
+            // getStatsResult.bandwidth.down = (getStatsResult.audio.bytesReceived - getStatsResult.bandwidth.helper.audioBytesSent) + (getStatsResult.video.bytesReceived - getStatsResult.bandwidth.helper.videoBytesSent);
             getStatsResult.bandwidth.helper.audioBytesSent = getStatsResult.audio.bytesSent;
             getStatsResult.bandwidth.helper.videoBytesSent = getStatsResult.video.bytesSent;
         }

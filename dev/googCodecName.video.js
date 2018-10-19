@@ -27,25 +27,25 @@ getStatsParser.checkVideoTracks = function(result) {
         getStatsResult.video[sendrecvType].availableBandwidth = bytes;
     }
 
+    // 当参数合并后，根据 bytesReceived 来判断recv/send
     if (!!result.bytesReceived) {
         var bytes = 0;
-        if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived || getStatsResult.internal.video[sendrecvType].prevBytesReceived > result.bytesReceived) {
-            getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
+        if (!getStatsResult.internal.video['recv'].prevBytesReceived || getStatsResult.internal.video['recv'].prevBytesReceived > result.bytesReceived) {
+            getStatsResult.internal.video['recv'].prevBytesReceived = result.bytesReceived;
         }
-        bytes = result.bytesReceived - getStatsResult.internal.video[sendrecvType].prevBytesReceived;
-        getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
-        getStatsResult.video[sendrecvType].availableBandwidth = bytes;
+        bytes = result.bytesReceived - getStatsResult.internal.video['recv'].prevBytesReceived;
+        getStatsResult.internal.video['recv'].prevBytesReceived = result.bytesReceived;
+        getStatsResult.video['recv'].availableBandwidth = bytes;
     }
 
+    // 当参数合并后，根据 bytesReceived 来判断recv/send
     if (!!result.packetsLost) {
-        var kilolostPackets = 0;
-
-        if (!getStatsResult.internal.video[sendrecvType].prevLostPacket) {
-            getStatsResult.internal.video[sendrecvType].prevLostPacket = result.packetsLost;
+        if (!getStatsResult.internal.video['recv'].prevLostPacket) {
+            getStatsResult.internal.video['recv'].prevLostPacket = result.packetsLost;
         }
         var bytes = getStatsResult.internal.video['recv'].prevBytesReceived;
-        var packets = result.packetsLost - getStatsResult.internal.video[sendrecvType].prevLostPacket;
-        getStatsResult.video[sendrecvType].packetsLostRate = bytes != 0 ? Math.round((packets / bytes) * 100) / 100 + "%" : '0.00%';
+        var packets = result.packetsLost - getStatsResult.internal.video['recv'].prevLostPacket;
+        getStatsResult.video['recv'].packetsLostRate = bytes != 0 ? Math.round((packets / bytes) * 100) / 100 + "%" : '0.00%';
     }
     if (result.googFrameHeightReceived && result.googFrameWidthReceived) {
         getStatsResult.resolutions[sendrecvType].width = result.googFrameWidthReceived;

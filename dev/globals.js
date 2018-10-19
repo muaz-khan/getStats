@@ -46,7 +46,7 @@ var getStatsResult = {
         encodedPerSecond: 0,
         helper: {
             audioBytesSent: 0,
-            videoBytestSent: 0
+            videoBytesSent: 0
         },
         speed: 0
     },

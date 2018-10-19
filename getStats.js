@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-19 3:38:33 AM UTC
+// Last time updated: 2018-10-19 6:19:07 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -126,8 +126,12 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }, {});
         // 若与原有字段有冲突，则在其他代码中做值检测，并用其他字段进行判断。例如sendrecvType
         return result.reduce(function(sum, item) {
+            if (item.type != 'outbound-rtp' && item.type != 'inbound-rtp' && item.type.indexOf('candidate') < 0) {
+                sum.push(item);
+                return sum;
+            }
             // 兼容candidate相关参数 - 处理字段兼容，转义
-            if (item.type.indexof('candidate') >= 0) {
+            if (item.type.indexOf('candidate') >= 0) {
                 if (item.ip) {
                     item.ipAddress = item.ip;
                 }
@@ -141,10 +145,6 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                     item.portNumber = item.port;
                 }
             };
-            if (item.type != 'outbound-rtp' && item.type != 'inbound-rtp' && item.type.indexof('candidate') < 0) {
-                sum.push(item);
-                return sum;
-            }
             item = Object.assign(item, idMap[item.transportId], idMap[item.codecId], idMap[item.trackId]);
             if (item.mimeType) {
                 item.googCodecName = item.mimeType.split('/')[1];

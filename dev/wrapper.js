@@ -38,7 +38,6 @@ function getStatsWrapper(cb) {
                 item.timestamp = res.timestamp;
                 items.push(item);
             });
-            console.log('items', items);
             var items = preHandler(items);
             cb(items);
         });

@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-19 11:13:46 AM UTC
+// Last time updated: 2018-10-22 8:40:07 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -281,7 +281,6 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                     item.timestamp = res.timestamp;
                     items.push(item);
                 });
-                console.log('items', items);
                 var items = preHandler(items);
                 cb(items);
             });

@@ -18,16 +18,16 @@ getStatsParser.checkVideoTracks = function(result) {
 
     if (!!result.bytesSent) {
         var bytes = 0;
-        // 若刷新呀SDP重新交换，需要重新计算
+        // 若刷新呀SDP重新交换，需要重新计算 Kb Mb Gb
         if (!getStatsResult.internal.video[sendrecvType].prevBytesSent || getStatsResult.internal.video[sendrecvType].prevBytesSent > result.bytesSent) {
             getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
         }
         bytes = result.bytesSent - getStatsResult.internal.video[sendrecvType].prevBytesSent;
         getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
-        getStatsResult.video[sendrecvType].availableBandwidth = bytes;
+        getStatsResult.video[sendrecvType].availableBandwidth = bytes * 8;
     }
 
-    // 当参数合并后，根据 bytesReceived 来判断recv/send
+    // 当参数合并后，根据 bytesReceived 来判断recv/send Kb Mb Gb
     if (!!result.bytesReceived && result.bytesReceived !== '0') {
         var bytes = 0;
         if (!getStatsResult.internal.video['recv'].prevBytesReceived || getStatsResult.internal.video['recv'].prevBytesReceived > result.bytesReceived) {
@@ -35,7 +35,7 @@ getStatsParser.checkVideoTracks = function(result) {
         }
         bytes = result.bytesReceived - getStatsResult.internal.video['recv'].prevBytesReceived;
         getStatsResult.internal.video['recv'].prevBytesReceived = result.bytesReceived;
-        getStatsResult.video['recv'].availableBandwidth = bytes;
+        getStatsResult.video['recv'].availableBandwidth = bytes * 8;
     }
 
     // 当参数合并后，根据 bytesReceived 来判断recv/send

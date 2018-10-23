@@ -7,15 +7,24 @@ getStatsParser.candidatePair = function(result) {
         // id === 'Conn-audio-1-0'
         // localCandidateId, remoteCandidateId
 
-        // 实际传输的比特率 bytesSent, bytesReceived - 标准的getStats不支持VideoBwe
+        // 实际传输的比特率 bytesSent, bytesReceived - 标准的getStats不支持VideoBwe Kb Mb Gb
         if (result.bytesSent) {
             if (!getStatsResult.internal.preCandidateBytesSent) {
                 getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
             }
             var bytes = result.bytesSent - getStatsResult.internal.preCandidateBytesSent;
             getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
-            getStatsResult.bandwidth.candidateTransmitBitrate = bytes;
+            getStatsResult.bandwidth.candidateTransmitBitrate = bytes * 8;
         }
+        if (result.bytesReceived) {
+            if (!getStatsResult.internal.preCandidateBytesReceived) {
+                getStatsResult.internal.preCandidateBytesReceived = result.bytesReceived;
+            }
+            var bytes = result.bytesReceived - getStatsResult.internal.preCandidateBytesReceived;
+            getStatsResult.internal.preCandidateBytesReceived = result.bytesReceived;
+            getStatsResult.bandwidth.candidateBytesReceived = bytes * 8;
+        }
+
         Object.keys(getStatsResult.internal.candidates).forEach(function(cid) {
             var candidate = getStatsResult.internal.candidates[cid];
             if (candidate.ipAddress.indexOf(result.googLocalAddress) !== -1) {

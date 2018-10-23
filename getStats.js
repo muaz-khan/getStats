@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-22 8:40:07 AM UTC
+// Last time updated: 2018-10-23 10:36:09 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -327,7 +327,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 bytes = result.bytesSent - getStatsResult.internal.audio[sendrecvType].prevBytesSent;
                 getStatsResult.internal.audio[sendrecvType].prevBytesSent = result.bytesSent;
             }
-            getStatsResult.audio[sendrecvType].availableBandwidth = bytes;
+            getStatsResult.audio[sendrecvType].availableBandwidth = bytes * 8;
         }
 
         // 当参数合并后，根据 bytesReceived 来判断recv/send
@@ -338,7 +338,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
             var bytes = result.bytesReceived - getStatsResult.internal.audio['recv'].prevBytesReceived;
             getStatsResult.internal.audio['recv'].prevBytesReceived = result.bytesReceived;
-            getStatsResult.audio['recv'].availableBandwidth = bytes;
+            getStatsResult.audio['recv'].availableBandwidth = bytes * 8;
         }
 
         if (getStatsResult.audio[sendrecvType].tracks.indexOf(result.googTrackId) === -1) {
@@ -366,16 +366,16 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
         if (!!result.bytesSent) {
             var bytes = 0;
-            // 若刷新呀SDP重新交换，需要重新计算
+            // 若刷新呀SDP重新交换，需要重新计算 Kb Mb Gb
             if (!getStatsResult.internal.video[sendrecvType].prevBytesSent || getStatsResult.internal.video[sendrecvType].prevBytesSent > result.bytesSent) {
                 getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
             }
             bytes = result.bytesSent - getStatsResult.internal.video[sendrecvType].prevBytesSent;
             getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
-            getStatsResult.video[sendrecvType].availableBandwidth = bytes;
+            getStatsResult.video[sendrecvType].availableBandwidth = bytes * 8;
         }
 
-        // 当参数合并后，根据 bytesReceived 来判断recv/send
+        // 当参数合并后，根据 bytesReceived 来判断recv/send Kb Mb Gb
         if (!!result.bytesReceived && result.bytesReceived !== '0') {
             var bytes = 0;
             if (!getStatsResult.internal.video['recv'].prevBytesReceived || getStatsResult.internal.video['recv'].prevBytesReceived > result.bytesReceived) {
@@ -383,7 +383,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             }
             bytes = result.bytesReceived - getStatsResult.internal.video['recv'].prevBytesReceived;
             getStatsResult.internal.video['recv'].prevBytesReceived = result.bytesReceived;
-            getStatsResult.video['recv'].availableBandwidth = bytes;
+            getStatsResult.video['recv'].availableBandwidth = bytes * 8;
         }
 
         // 当参数合并后，根据 bytesReceived 来判断recv/send
@@ -432,15 +432,24 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             // id === 'Conn-audio-1-0'
             // localCandidateId, remoteCandidateId
 
-            // 实际传输的比特率 bytesSent, bytesReceived - 标准的getStats不支持VideoBwe
+            // 实际传输的比特率 bytesSent, bytesReceived - 标准的getStats不支持VideoBwe Kb Mb Gb
             if (result.bytesSent) {
                 if (!getStatsResult.internal.preCandidateBytesSent) {
                     getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
                 }
                 var bytes = result.bytesSent - getStatsResult.internal.preCandidateBytesSent;
                 getStatsResult.internal.preCandidateBytesSent = result.bytesSent;
-                getStatsResult.bandwidth.candidateTransmitBitrate = bytes;
+                getStatsResult.bandwidth.candidateTransmitBitrate = bytes * 8;
             }
+            if (result.bytesReceived) {
+                if (!getStatsResult.internal.preCandidateBytesReceived) {
+                    getStatsResult.internal.preCandidateBytesReceived = result.bytesReceived;
+                }
+                var bytes = result.bytesReceived - getStatsResult.internal.preCandidateBytesReceived;
+                getStatsResult.internal.preCandidateBytesReceived = result.bytesReceived;
+                getStatsResult.bandwidth.candidateBytesReceived = bytes * 8;
+            }
+
             Object.keys(getStatsResult.internal.candidates).forEach(function(cid) {
                 var candidate = getStatsResult.internal.candidates[cid];
                 if (candidate.ipAddress.indexOf(result.googLocalAddress) !== -1) {

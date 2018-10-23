@@ -4,3 +4,8 @@
 {key: Arrays} => Arrays
 
 ## [LibWebrtc](https://webrtc.org/native-code/)
+
+## [Which element in webrtc API stat refer to incoming bit rate](https://stackoverflow.com/questions/27699144/which-element-in-webrtc-api-stat-refer-to-incoming-bit-rate)
+
+> checkAddress
+- https://webrtc.github.io/samples/src/content/peerconnection/constraints/

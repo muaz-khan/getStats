@@ -93,7 +93,7 @@ var getStatsResult = {
     },
     bytesToSize: function(bytes) {
         var k = 1000;
-        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        var sizes = ['Bytes', 'Kb', 'Mb', 'Gb', 'Tb'];
         if (bytes <= 0) {
             return '0 Bytes';
         }

@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-24 9:36:28 AM UTC
+// Last time updated: 2018-10-24 9:40:45 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -109,7 +109,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         },
         bytesToSize: function(bytes) {
             var k = 1000;
-            var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            var sizes = ['Bytes', 'Kb', 'Mb', 'Gb', 'Tb'];
             if (bytes <= 0) {
                 return '0 Bytes';
             }

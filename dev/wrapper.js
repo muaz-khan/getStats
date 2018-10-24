@@ -20,7 +20,6 @@ function getStatsWrapper(cb) {
         peer.getStats(function(res) {
             var items = [];
             var result = res.result();
-            console.dir(result);
             result.forEach(function(res) {
                 var item = {};
                 var names = null;

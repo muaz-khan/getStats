@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-10-23 10:36:09 AM UTC
+// Last time updated: 2018-10-24 9:36:28 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -263,7 +263,6 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             peer.getStats(function(res) {
                 var items = [];
                 var result = res.result();
-                console.dir(result);
                 result.forEach(function(res) {
                     var item = {};
                     var names = null;

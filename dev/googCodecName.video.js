@@ -45,7 +45,7 @@ getStatsParser.checkVideoTracks = function(result) {
         }
         var bytes = getStatsResult.internal.video['recv'].prevBytesReceived;
         var packets = result.packetsLost - getStatsResult.internal.video['recv'].prevLostPacket;
-        getStatsResult.video['recv'].packetsLostRate = bytes != 0 ? Math.round((packets / bytes) * 100) / 100 + "%" : '0.00%';
+        getStatsResult.video['recv'].packetsLostRate = bytes != 0 && packets != NaN ? Math.round((packets / bytes) * 100) / 100 + "%" : "0.00%";
     }
     if (result.googFrameHeightReceived && result.googFrameWidthReceived) {
         getStatsResult.resolutions[sendrecvType].width = result.googFrameWidthReceived;

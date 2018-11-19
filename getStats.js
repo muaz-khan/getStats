@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-11-19 8:03:10 AM UTC
+// Last time updated: 2018-11-19 8:04:44 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -390,7 +390,8 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             if (!getStatsResult.internal.video['recv'].prevLostPacket) {
                 getStatsResult.internal.video['recv'].prevLostPacket = result.packetsLost;
             }
-            var bytes = getStatsResult.internal.video['recv'].prevBytesReceived;
+            // peer only one client, init value
+            var bytes = getStatsResult.internal.video['recv'].prevBytesReceived || 0;
             var packets = result.packetsLost - getStatsResult.internal.video['recv'].prevLostPacket;
             getStatsResult.video['recv'].packetsLostRate = bytes != 0 && packets != NaN ? Math.round((packets / bytes) * 100) / 100 + "%" : "0.00%";
         }

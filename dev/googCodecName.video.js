@@ -43,7 +43,8 @@ getStatsParser.checkVideoTracks = function(result) {
         if (!getStatsResult.internal.video['recv'].prevLostPacket) {
             getStatsResult.internal.video['recv'].prevLostPacket = result.packetsLost;
         }
-        var bytes = getStatsResult.internal.video['recv'].prevBytesReceived;
+        // peer only one client, init value
+        var bytes = getStatsResult.internal.video['recv'].prevBytesReceived || 0;
         var packets = result.packetsLost - getStatsResult.internal.video['recv'].prevLostPacket;
         getStatsResult.video['recv'].packetsLostRate = bytes != 0 && packets != NaN ? Math.round((packets / bytes) * 100) / 100 + "%" : "0.00%";
     }

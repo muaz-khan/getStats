@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-11-19 8:04:44 AM UTC
+// Last time updated: 2018-11-26 3:26:22 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -181,12 +181,12 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     } else {
         throw '1st argument is not exit getStats function';
     }
-
+    // MediaStreamTrack 或 RTCPeerConnection 不存在时，Android/IOS环境中，不作检测
     if (arguments[0] instanceof RTCPeerConnection) {
         if (!!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {
             console.warn('2nd argument is not instance of MediaStreamTrack.');
         }
-    } else if (!!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {
+    } else if (MediaStreamTrack && !!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {
         console.warn('1st argument is not instance of MediaStreamTrack.');
     }
 

@@ -11,6 +11,9 @@ if (typeof arguments[0].getStats === 'function') {
 } else {
     throw '1st argument is not exit getStats function';
 }
+if (!MediaStreamTrack) {
+    return
+}
 // MediaStreamTrack 或 RTCPeerConnection 不存在时，Android/IOS环境中，不作检测
 if (arguments[0] instanceof RTCPeerConnection) {
     if (!!navigator.mozGetUserMedia && !(mediaStreamTrack instanceof MediaStreamTrack)) {

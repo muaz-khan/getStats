@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-11-26 3:26:22 AM UTC
+// Last time updated: 2018-11-26 6:19:49 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -180,6 +180,9 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }
     } else {
         throw '1st argument is not exit getStats function';
+    }
+    if (!MediaStreamTrack) {
+        return
     }
     // MediaStreamTrack 或 RTCPeerConnection 不存在时，Android/IOS环境中，不作检测
     if (arguments[0] instanceof RTCPeerConnection) {

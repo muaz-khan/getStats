@@ -132,7 +132,7 @@ function creatVideoCounter(paramName, type, op, scale, userFiled) {
     // 当参数合并后，根据 googNacksSent 来判断recv/send Kb Mb Gb
     if (!!result[paramName] && result[paramName] !== '0') {
         var Count = 0;
-        if (!getStatsResult.internal.video[type]['prev' + paramName] || getStatsResult.internal.video[type]['prev' + paramName]> result[paramName]) {
+        if (!getStatsResult.internal.video[type]['prev' + paramName] || getStatsResult.internal.video[type]['prev' + paramName] > result[paramName]) {
             getStatsResult.internal.video[type]['prev' + paramName] = result[paramName];
         }
         if ((op || '+') === '+') {

@@ -128,7 +128,7 @@ var getStatsParser = {
  * @param {*} userFiled - default paramName
  * @returns {NULL}
  */
-function creatVideoCounter(paramName, type, op, scale, userFiled) {
+function creatVideoCounter(result, paramName, type, op, scale, userFiled) {
     // 当参数合并后，根据 googNacksSent 来判断recv/send Kb Mb Gb
     if (!!result[paramName] && result[paramName] !== '0') {
         var Count = 0;

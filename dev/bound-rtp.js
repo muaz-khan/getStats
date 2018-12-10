@@ -10,14 +10,14 @@
 getStatsParser.boundRtp = function(result) {
 
     if (result.type == 'inbound-rtp') {
-        creatVideoCounter('nackCount', 'recv', '+', 1, 'googNacksReceived');
-        creatVideoCounter('pliCount', 'recv', '+', 1, 'googPlisReceived');
-        creatVideoCounter('firCount', 'recv', '+', 1, 'googFirsReceived');
+        creatVideoCounter(result, 'nackCount', 'recv', '+', 1, 'googNacksReceived');
+        creatVideoCounter(result, 'pliCount', 'recv', '+', 1, 'googPlisReceived');
+        creatVideoCounter(result, 'firCount', 'recv', '+', 1, 'googFirsReceived');
     }
 
     if (result.type == 'outbound-rtp') {
-        creatVideoCounter('nackCount', 'send', '+', 1, 'googNacksSent');
-        creatVideoCounter('pliCount', 'send', '+', 1, 'googPlisSent');
-        creatVideoCounter('firCount', 'send', '+', 1, 'googFirsSent');
+        creatVideoCounter(result, 'nackCount', 'send', '+', 1, 'googNacksSent');
+        creatVideoCounter(result, 'pliCount', 'send', '+', 1, 'googPlisSent');
+        creatVideoCounter(result, 'firCount', 'send', '+', 1, 'googFirsSent');
     }
 }

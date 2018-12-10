@@ -20,6 +20,11 @@ getStatsParser.ssrc = function(result) {
     if (SSRC[result.mediaType][sendrecvType].indexOf(result.ssrc) === -1) {
         SSRC[result.mediaType][sendrecvType].push(result.ssrc)
     }
-
+    creatVideoCounter('googNacksSent', 'send');
+    creatVideoCounter('googPlisSent', 'send');
+    creatVideoCounter('googFirsSent', 'send');
+    creatVideoCounter('googNacksReceived', 'recv');
+    creatVideoCounter('googPlisReceived', 'recv');
+    creatVideoCounter('googFirsReceived', 'recv');
     getStatsResult[result.mediaType][sendrecvType].streams = SSRC[result.mediaType][sendrecvType].length;
 };

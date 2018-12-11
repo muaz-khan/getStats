@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-12-11 9:54:39 AM UTC
+// Last time updated: 2018-12-11 11:15:10 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -48,7 +48,8 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 streams: 0,
                 googNacksSent: 0,
                 googPlisSent: 0,
-                googFirsReceived: 0
+                googFirsReceived: 0,
+                googRtt: 0
             },
             recv: {
                 tracks: [],
@@ -484,6 +485,8 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 getStatsResult.internal.preCandidateBytesReceived = result.bytesReceived;
                 getStatsResult.bandwidth.candidateBytesReceived = bytes * 8;
             }
+            // rtt(currentRoundTripTime) adapter for android
+            result.currentRoundTripTime && (getStatsResult.video['recv']['googRtt'] = result.currentRoundTripTime);
 
             Object.keys(getStatsResult.internal.candidates).forEach(function(cid) {
                 var candidate = getStatsResult.internal.candidates[cid];
@@ -507,7 +510,6 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 if (localCandidate.ipAddress) {
                     getStatsResult.connectionType.systemIpAddress = localCandidate.ipAddress;
                 }
-
             }
 
             var remoteCandidate = getStatsResult.internal.candidates[result.remoteCandidateId];
@@ -681,11 +683,13 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         if (SSRC[result.mediaType][sendrecvType].indexOf(result.ssrc) === -1) {
             SSRC[result.mediaType][sendrecvType].push(result.ssrc)
         }
-
+        // adapter for ios/web
         if (sendrecvType == 'recv') {
             creatVideoCounter(result, 'googNacksSent', 'recv');
             creatVideoCounter(result, 'googPlisSent', 'recv');
             creatVideoCounter(result, 'googFirsSent', 'recv');
+            // rtt(currentRoundTripTime) 
+            result.googRtt && (getStatsResult.video['recv']['googRtt'] = result.googRtt);
         } else {
             creatVideoCounter(result, 'googNacksReceived', 'send');
             creatVideoCounter(result, 'googPlisReceived', 'send');

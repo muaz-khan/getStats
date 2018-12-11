@@ -32,7 +32,8 @@ var getStatsResult = {
             streams: 0,
             googNacksSent: 0,
             googPlisSent: 0,
-            googFirsReceived: 0
+            googFirsReceived: 0,
+            googRtt: 0
         },
         recv: {
             tracks: [],

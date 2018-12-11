@@ -24,6 +24,8 @@ getStatsParser.candidatePair = function(result) {
             getStatsResult.internal.preCandidateBytesReceived = result.bytesReceived;
             getStatsResult.bandwidth.candidateBytesReceived = bytes * 8;
         }
+        // rtt(currentRoundTripTime) adapter for android
+        result.currentRoundTripTime && (getStatsResult.video['recv']['googRtt'] = result.currentRoundTripTime);
 
         Object.keys(getStatsResult.internal.candidates).forEach(function(cid) {
             var candidate = getStatsResult.internal.candidates[cid];
@@ -47,7 +49,6 @@ getStatsParser.candidatePair = function(result) {
             if (localCandidate.ipAddress) {
                 getStatsResult.connectionType.systemIpAddress = localCandidate.ipAddress;
             }
-
         }
 
         var remoteCandidate = getStatsResult.internal.candidates[result.remoteCandidateId];

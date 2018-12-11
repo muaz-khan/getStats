@@ -20,11 +20,13 @@ getStatsParser.ssrc = function(result) {
     if (SSRC[result.mediaType][sendrecvType].indexOf(result.ssrc) === -1) {
         SSRC[result.mediaType][sendrecvType].push(result.ssrc)
     }
-
+    // adapter for ios/web
     if (sendrecvType == 'recv') {
         creatVideoCounter(result, 'googNacksSent', 'recv');
         creatVideoCounter(result, 'googPlisSent', 'recv');
         creatVideoCounter(result, 'googFirsSent', 'recv');
+        // rtt(currentRoundTripTime) 
+        result.googRtt && (getStatsResult.video['recv']['googRtt'] = result.googRtt);
     } else {
         creatVideoCounter(result, 'googNacksReceived', 'send');
         creatVideoCounter(result, 'googPlisReceived', 'send');

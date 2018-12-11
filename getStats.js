@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-12-11 11:15:10 AM UTC
+// Last time updated: 2018-12-11 11:34:41 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -486,7 +486,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 getStatsResult.bandwidth.candidateBytesReceived = bytes * 8;
             }
             // rtt(currentRoundTripTime) adapter for android
-            result.currentRoundTripTime && (getStatsResult.video['recv']['googRtt'] = result.currentRoundTripTime);
+            result.currentRoundTripTime && (getStatsResult.video['send']['googRtt'] = result.currentRoundTripTime);
 
             Object.keys(getStatsResult.internal.candidates).forEach(function(cid) {
                 var candidate = getStatsResult.internal.candidates[cid];
@@ -689,11 +689,11 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             creatVideoCounter(result, 'googPlisSent', 'recv');
             creatVideoCounter(result, 'googFirsSent', 'recv');
             // rtt(currentRoundTripTime) 
-            result.googRtt && (getStatsResult.video['recv']['googRtt'] = result.googRtt);
         } else {
             creatVideoCounter(result, 'googNacksReceived', 'send');
             creatVideoCounter(result, 'googPlisReceived', 'send');
             creatVideoCounter(result, 'googFirsReceived', 'send');
+            result.googRtt && (getStatsResult.video['send']['googRtt'] = result.googRtt);
         }
 
         getStatsResult[result.mediaType][sendrecvType].streams = SSRC[result.mediaType][sendrecvType].length;

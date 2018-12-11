@@ -25,7 +25,7 @@ getStatsParser.candidatePair = function(result) {
             getStatsResult.bandwidth.candidateBytesReceived = bytes * 8;
         }
         // rtt(currentRoundTripTime) adapter for android
-        result.currentRoundTripTime && (getStatsResult.video['recv']['googRtt'] = result.currentRoundTripTime);
+        result.currentRoundTripTime && (getStatsResult.video['send']['googRtt'] = result.currentRoundTripTime);
 
         Object.keys(getStatsResult.internal.candidates).forEach(function(cid) {
             var candidate = getStatsResult.internal.candidates[cid];

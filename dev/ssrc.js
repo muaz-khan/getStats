@@ -26,11 +26,11 @@ getStatsParser.ssrc = function(result) {
         creatVideoCounter(result, 'googPlisSent', 'recv');
         creatVideoCounter(result, 'googFirsSent', 'recv');
         // rtt(currentRoundTripTime) 
-        result.googRtt && (getStatsResult.video['recv']['googRtt'] = result.googRtt);
     } else {
         creatVideoCounter(result, 'googNacksReceived', 'send');
         creatVideoCounter(result, 'googPlisReceived', 'send');
         creatVideoCounter(result, 'googFirsReceived', 'send');
+        result.googRtt && (getStatsResult.video['send']['googRtt'] = result.googRtt);
     }
 
     getStatsResult[result.mediaType][sendrecvType].streams = SSRC[result.mediaType][sendrecvType].length;

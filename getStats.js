@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-12-11 9:40:43 AM UTC
+// Last time updated: 2018-12-11 9:54:39 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -697,13 +697,12 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
     getStatsParser.boundRtp = function(result) {
 
-        if (result.type == 'inbound-rtp') {
+        if (result.type == 'outbound-rtp') {
             creatVideoCounter(result, 'nackCount', 'send', '+', 1, 'googNacksReceived');
             creatVideoCounter(result, 'pliCount', 'send', '+', 1, 'googPlisReceived');
             creatVideoCounter(result, 'firCount', 'send', '+', 1, 'googFirsReceived');
         }
-
-        if (result.type == 'outbound-rtp') {
+        if (result.type == 'inbound-rtp') {
             creatVideoCounter(result, 'nackCount', 'recv', '+', 1, 'googNacksSent');
             creatVideoCounter(result, 'pliCount', 'recv', '+', 1, 'googPlisSent');
             creatVideoCounter(result, 'firCount', 'recv', '+', 1, 'googFirsSent');

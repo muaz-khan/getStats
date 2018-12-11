@@ -9,3 +9,17 @@
 
 > checkAddress
 - https://webrtc.github.io/samples/src/content/peerconnection/constraints/
+
+
+## Video Params
+video down 统计信息中的如下属性：
+googNacksSent、googPlisSent、googFirsSent
+
+注：来源于 video recv
+![](./example/getStats-recv.png)
+
+video up 统计信息中的如下属性：
+googNacksReceived、googPlisReceived、googFirsReceived
+
+注：来源与 video send
+![](./example/getStats-send.png)

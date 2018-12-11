@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-12-10 9:49:44 AM UTC
+// Last time updated: 2018-12-11 9:54:39 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -681,27 +681,31 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         if (SSRC[result.mediaType][sendrecvType].indexOf(result.ssrc) === -1) {
             SSRC[result.mediaType][sendrecvType].push(result.ssrc)
         }
-        creatVideoCounter(result, 'googNacksSent', 'send');
-        creatVideoCounter(result, 'googPlisSent', 'send');
-        creatVideoCounter(result, 'googFirsSent', 'send');
-        creatVideoCounter(result, 'googNacksReceived', 'recv');
-        creatVideoCounter(result, 'googPlisReceived', 'recv');
-        creatVideoCounter(result, 'googFirsReceived', 'recv');
+
+        if (sendrecvType == 'recv') {
+            creatVideoCounter(result, 'googNacksSent', 'recv');
+            creatVideoCounter(result, 'googPlisSent', 'recv');
+            creatVideoCounter(result, 'googFirsSent', 'recv');
+        } else {
+            creatVideoCounter(result, 'googNacksReceived', 'send');
+            creatVideoCounter(result, 'googPlisReceived', 'send');
+            creatVideoCounter(result, 'googFirsReceived', 'send');
+        }
+
         getStatsResult[result.mediaType][sendrecvType].streams = SSRC[result.mediaType][sendrecvType].length;
     };
 
     getStatsParser.boundRtp = function(result) {
 
-        if (result.type == 'inbound-rtp') {
-            creatVideoCounter(result, 'nackCount', 'recv', '+', 1, 'googNacksReceived');
-            creatVideoCounter(result, 'pliCount', 'recv', '+', 1, 'googPlisReceived');
-            creatVideoCounter(result, 'firCount', 'recv', '+', 1, 'googFirsReceived');
-        }
-
         if (result.type == 'outbound-rtp') {
-            creatVideoCounter(result, 'nackCount', 'send', '+', 1, 'googNacksSent');
-            creatVideoCounter(result, 'pliCount', 'send', '+', 1, 'googPlisSent');
-            creatVideoCounter(result, 'firCount', 'send', '+', 1, 'googFirsSent');
+            creatVideoCounter(result, 'nackCount', 'send', '+', 1, 'googNacksReceived');
+            creatVideoCounter(result, 'pliCount', 'send', '+', 1, 'googPlisReceived');
+            creatVideoCounter(result, 'firCount', 'send', '+', 1, 'googFirsReceived');
+        }
+        if (result.type == 'inbound-rtp') {
+            creatVideoCounter(result, 'nackCount', 'recv', '+', 1, 'googNacksSent');
+            creatVideoCounter(result, 'pliCount', 'recv', '+', 1, 'googPlisSent');
+            creatVideoCounter(result, 'firCount', 'recv', '+', 1, 'googFirsSent');
         }
     }
 

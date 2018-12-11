@@ -29,13 +29,19 @@ var getStatsResult = {
             tracks: [],
             codecs: [],
             availableBandwidth: 0,
-            streams: 0
+            streams: 0,
+            googNacksSent: 0,
+            googPlisSent: 0,
+            googFirsReceived: 0
         },
         recv: {
             tracks: [],
             codecs: [],
             availableBandwidth: 0,
-            streams: 0
+            streams: 0,
+            googNacksReceived: 0,
+            googPlisReceived: 0,
+            googFirsReceived: 0
         },
         bytesSent: 0,
         bytesReceived: 0
@@ -113,3 +119,29 @@ var getStatsParser = {
         }
     }
 };
+
+/**
+ * Video Counter helper function
+ * @param {*} paramName
+ * @param {*} op - default `+`
+ * @param {*} scale - default 1
+ * @param {*} userFiled - default paramName
+ * @returns {NULL}
+ */
+function creatVideoCounter(result, paramName, type, op, scale, userFiled) {
+    // 当参数合并后，根据 googNacksSent 来判断recv/send Kb Mb Gb
+    if (!!result[paramName] && result[paramName] !== '0') {
+        var Count = 0;
+        if (!getStatsResult.internal.video[type]['prev' + paramName] || getStatsResult.internal.video[type]['prev' + paramName] > result[paramName]) {
+            getStatsResult.internal.video[type]['prev' + paramName] = result[paramName];
+        }
+        if ((op || '+') === '+') {
+            Count = result[paramName] + getStatsResult.internal.video[type]['prev' + paramName];
+        } else {
+            Count = result[paramName] - getStatsResult.internal.video[type]['prev' + paramName];
+        }
+        getStatsResult.internal.video[type]['prev' + paramName] = result[paramName];
+        return getStatsResult.video[type][userFiled || paramName] = Count * (scale || 1);
+    }
+    return;
+}

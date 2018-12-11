@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-11-26 6:19:49 AM UTC
+// Last time updated: 2018-12-10 9:49:44 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -45,13 +45,19 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 tracks: [],
                 codecs: [],
                 availableBandwidth: 0,
-                streams: 0
+                streams: 0,
+                googNacksSent: 0,
+                googPlisSent: 0,
+                googFirsReceived: 0
             },
             recv: {
                 tracks: [],
                 codecs: [],
                 availableBandwidth: 0,
-                streams: 0
+                streams: 0,
+                googNacksReceived: 0,
+                googPlisReceived: 0,
+                googFirsReceived: 0
             },
             bytesSent: 0,
             bytesReceived: 0
@@ -129,6 +135,32 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             }
         }
     };
+
+    /**
+     * Video Counter helper function
+     * @param {*} paramName
+     * @param {*} op - default `+`
+     * @param {*} scale - default 1
+     * @param {*} userFiled - default paramName
+     * @returns {NULL}
+     */
+    function creatVideoCounter(result, paramName, type, op, scale, userFiled) {
+        // 当参数合并后，根据 googNacksSent 来判断recv/send Kb Mb Gb
+        if (!!result[paramName] && result[paramName] !== '0') {
+            var Count = 0;
+            if (!getStatsResult.internal.video[type]['prev' + paramName] || getStatsResult.internal.video[type]['prev' + paramName] > result[paramName]) {
+                getStatsResult.internal.video[type]['prev' + paramName] = result[paramName];
+            }
+            if ((op || '+') === '+') {
+                Count = result[paramName] + getStatsResult.internal.video[type]['prev' + paramName];
+            } else {
+                Count = result[paramName] - getStatsResult.internal.video[type]['prev' + paramName];
+            }
+            getStatsResult.internal.video[type]['prev' + paramName] = result[paramName];
+            return getStatsResult.video[type][userFiled || paramName] = Count * (scale || 1);
+        }
+        return;
+    }
 
     function preHandler(result) {
         // 根据codeId\trackId映射 - 处理关联关系
@@ -649,9 +681,29 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         if (SSRC[result.mediaType][sendrecvType].indexOf(result.ssrc) === -1) {
             SSRC[result.mediaType][sendrecvType].push(result.ssrc)
         }
-
+        creatVideoCounter(result, 'googNacksSent', 'send');
+        creatVideoCounter(result, 'googPlisSent', 'send');
+        creatVideoCounter(result, 'googFirsSent', 'send');
+        creatVideoCounter(result, 'googNacksReceived', 'recv');
+        creatVideoCounter(result, 'googPlisReceived', 'recv');
+        creatVideoCounter(result, 'googFirsReceived', 'recv');
         getStatsResult[result.mediaType][sendrecvType].streams = SSRC[result.mediaType][sendrecvType].length;
     };
+
+    getStatsParser.boundRtp = function(result) {
+
+        if (result.type == 'inbound-rtp') {
+            creatVideoCounter(result, 'nackCount', 'recv', '+', 1, 'googNacksReceived');
+            creatVideoCounter(result, 'pliCount', 'recv', '+', 1, 'googPlisReceived');
+            creatVideoCounter(result, 'firCount', 'recv', '+', 1, 'googFirsReceived');
+        }
+
+        if (result.type == 'outbound-rtp') {
+            creatVideoCounter(result, 'nackCount', 'send', '+', 1, 'googNacksSent');
+            creatVideoCounter(result, 'pliCount', 'send', '+', 1, 'googPlisSent');
+            creatVideoCounter(result, 'firCount', 'send', '+', 1, 'googFirsSent');
+        }
+    }
 
     getStatsLooper();
 

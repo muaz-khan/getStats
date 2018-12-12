@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-12-11 11:34:41 AM UTC
+// Last time updated: 2018-12-12 4:04:40 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -15,7 +15,6 @@
 window.getStats = function(mediaStreamTrack, callback, interval) {
 
     var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-
     if (typeof MediaStreamTrack === 'undefined') {
         MediaStreamTrack = {}; // todo?
     }
@@ -139,11 +138,11 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
     /**
      * Video Counter helper function
-     * @param {*} paramName
-     * @param {*} op - default `+`
-     * @param {*} scale - default 1
-     * @param {*} userFiled - default paramName
-     * @returns {NULL}
+     * @param {String} paramName
+     * @param {String} op - default `+`
+     * @param {Number} scale - default 1
+     * @param {String} userFiled - default paramName
+     * @returns {resetMethod} resetMethod - reset prevValue
      */
     function creatVideoCounter(result, paramName, type, op, scale, userFiled) {
         // 当参数合并后，根据 googNacksSent 来判断recv/send Kb Mb Gb
@@ -158,7 +157,15 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 Count = result[paramName] - getStatsResult.internal.video[type]['prev' + paramName];
             }
             getStatsResult.internal.video[type]['prev' + paramName] = result[paramName];
-            return getStatsResult.video[type][userFiled || paramName] = Count * (scale || 1);
+            getStatsResult.video[type][userFiled || paramName] = Count * (scale || 1);
+
+            var reset = function(reset) {
+                getStatsResult.video[type]['prev' + (userFiled || paramName)] = reset;
+            };
+            reset.toString = function() {
+                return getStatsResult.video[type][userFiled || paramName];
+            }
+            return reset;
         }
         return;
     }
@@ -382,7 +389,9 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     };
 
     var VIDEO_codecs = ['vp9', 'vp8', 'h264'];
-
+    var preTimestamp = Date.now();
+    var resetPacketReceived = null;
+    var restePacketsLost = null;
     getStatsParser.checkVideoTracks = function(result) {
         if (!result.googCodecName || result.mediaType !== 'video') return;
 
@@ -421,16 +430,17 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             getStatsResult.video['recv'].availableBandwidth = bytes * 8;
         }
 
-        // 当参数合并后，根据 bytesReceived 来判断recv/send
-        if (!!result.packetsLost) {
-            if (!getStatsResult.internal.video['recv'].prevLostPacket) {
-                getStatsResult.internal.video['recv'].prevLostPacket = result.packetsLost;
+        if (!!result.packetsReceived && !!result.packetsLost) {
+
+            if (Date.now() - preTimestamp >= 5000) {
+                getStatsResult.video['recv'].packetsLostRate = Math.round((restePacketsLost.toString() / resetPacketReceived.toString()) * 100) / 100 + "%";
+                resetPacketReceived && resetPacketReceived(0);
+                restePacketsLost && restePacketsLost(0);
             }
-            // peer only one client, init value
-            var bytes = getStatsResult.internal.video['recv'].prevBytesReceived || 0;
-            var packets = result.packetsLost - getStatsResult.internal.video['recv'].prevLostPacket;
-            getStatsResult.video['recv'].packetsLostRate = bytes != 0 && packets != NaN ? Math.round((packets / bytes) * 100) / 100 + "%" : "0.00%";
+            resetPacketReceived = creatVideoCounter(result, 'packetsReceived', 'recv', '+');
+            restePacketsLost = creatVideoCounter(result, 'packetsLost', 'recv', '+');
         }
+
         if (result.googFrameHeightReceived && result.googFrameWidthReceived) {
             getStatsResult.resolutions[sendrecvType].width = result.googFrameWidthReceived;
             getStatsResult.resolutions[sendrecvType].height = result.googFrameHeightReceived;

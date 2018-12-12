@@ -1,5 +1,4 @@
 var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-
 if (typeof MediaStreamTrack === 'undefined') {
     MediaStreamTrack = {}; // todo?
 }
@@ -123,11 +122,11 @@ var getStatsParser = {
 
 /**
  * Video Counter helper function
- * @param {*} paramName
- * @param {*} op - default `+`
- * @param {*} scale - default 1
- * @param {*} userFiled - default paramName
- * @returns {NULL}
+ * @param {String} paramName
+ * @param {String} op - default `+`
+ * @param {Number} scale - default 1
+ * @param {String} userFiled - default paramName
+ * @returns {resetMethod} resetMethod - reset prevValue
  */
 function creatVideoCounter(result, paramName, type, op, scale, userFiled) {
     // 当参数合并后，根据 googNacksSent 来判断recv/send Kb Mb Gb
@@ -142,7 +141,15 @@ function creatVideoCounter(result, paramName, type, op, scale, userFiled) {
             Count = result[paramName] - getStatsResult.internal.video[type]['prev' + paramName];
         }
         getStatsResult.internal.video[type]['prev' + paramName] = result[paramName];
-        return getStatsResult.video[type][userFiled || paramName] = Count * (scale || 1);
+        getStatsResult.video[type][userFiled || paramName] = Count * (scale || 1);
+
+        var reset = function(reset) {
+            getStatsResult.video[type]['prev' + (userFiled || paramName)] = reset;
+        };
+        reset.toString = function() {
+            return getStatsResult.video[type][userFiled || paramName];
+        }
+        return reset;
     }
     return;
 }

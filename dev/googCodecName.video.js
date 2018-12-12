@@ -1,5 +1,7 @@
 var VIDEO_codecs = ['vp9', 'vp8', 'h264'];
-
+var preTimestamp = Date.now();
+var resetPacketReceived = null;
+var restePacketsLost = null;
 getStatsParser.checkVideoTracks = function(result) {
     if (!result.googCodecName || result.mediaType !== 'video') return;
 
@@ -38,16 +40,17 @@ getStatsParser.checkVideoTracks = function(result) {
         getStatsResult.video['recv'].availableBandwidth = bytes * 8;
     }
 
-    // 当参数合并后，根据 bytesReceived 来判断recv/send
-    if (!!result.packetsLost) {
-        if (!getStatsResult.internal.video['recv'].prevLostPacket) {
-            getStatsResult.internal.video['recv'].prevLostPacket = result.packetsLost;
+    if (!!result.packetsReceived && !!result.packetsLost) {
+
+        if (Date.now() - preTimestamp >= 5000) {
+            getStatsResult.video['recv'].packetsLostRate = Math.round((restePacketsLost.toString() / resetPacketReceived.toString()) * 100) / 100 + "%";
+            resetPacketReceived && resetPacketReceived(0);
+            restePacketsLost && restePacketsLost(0);
         }
-        // peer only one client, init value
-        var bytes = getStatsResult.internal.video['recv'].prevBytesReceived || 0;
-        var packets = result.packetsLost - getStatsResult.internal.video['recv'].prevLostPacket;
-        getStatsResult.video['recv'].packetsLostRate = bytes != 0 && packets != NaN ? Math.round((packets / bytes) * 100) / 100 + "%" : "0.00%";
+        resetPacketReceived = creatVideoCounter(result, 'packetsReceived', 'recv', '+');
+        restePacketsLost = creatVideoCounter(result, 'packetsLost', 'recv', '+');
     }
+
     if (result.googFrameHeightReceived && result.googFrameWidthReceived) {
         getStatsResult.resolutions[sendrecvType].width = result.googFrameWidthReceived;
         getStatsResult.resolutions[sendrecvType].height = result.googFrameHeightReceived;

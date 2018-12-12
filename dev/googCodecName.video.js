@@ -44,6 +44,7 @@ getStatsParser.checkVideoTracks = function(result) {
         var now = Date.now();
         if (now - preTimestamp >= 5000 && resetPacketReceived && restePacketsLost) {
             getStatsResult.video['recv'].packetsLostRate = Math.round((restePacketsLost.toString() / resetPacketReceived.toString()) * 100) / 100 + "%";
+            getStatsResult.video['recv'].totalPacketsLosts = (getStatsResult.video['recv'].totalPacketsLosts || 0) + restePacketsLost.toString();
             resetPacketReceived && resetPacketReceived(0);
             restePacketsLost && restePacketsLost(0);
             preTimestamp = now;

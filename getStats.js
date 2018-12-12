@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2018-12-12 4:04:40 AM UTC
+// Last time updated: 2018-12-12 4:06:29 AM UTC
 
 // _______________
 // getStats v1.0.10
@@ -431,11 +431,12 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }
 
         if (!!result.packetsReceived && !!result.packetsLost) {
-
-            if (Date.now() - preTimestamp >= 5000) {
+            var now = Date.now();
+            if (now - preTimestamp >= 5000) {
                 getStatsResult.video['recv'].packetsLostRate = Math.round((restePacketsLost.toString() / resetPacketReceived.toString()) * 100) / 100 + "%";
                 resetPacketReceived && resetPacketReceived(0);
                 restePacketsLost && restePacketsLost(0);
+                preTimestamp = now;
             }
             resetPacketReceived = creatVideoCounter(result, 'packetsReceived', 'recv', '+');
             restePacketsLost = creatVideoCounter(result, 'packetsLost', 'recv', '+');

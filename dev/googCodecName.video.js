@@ -41,11 +41,12 @@ getStatsParser.checkVideoTracks = function(result) {
     }
 
     if (!!result.packetsReceived && !!result.packetsLost) {
-
-        if (Date.now() - preTimestamp >= 5000) {
+        var now = Date.now();
+        if (now - preTimestamp >= 5000) {
             getStatsResult.video['recv'].packetsLostRate = Math.round((restePacketsLost.toString() / resetPacketReceived.toString()) * 100) / 100 + "%";
             resetPacketReceived && resetPacketReceived(0);
             restePacketsLost && restePacketsLost(0);
+            preTimestamp = now;
         }
         resetPacketReceived = creatVideoCounter(result, 'packetsReceived', 'recv', '+');
         restePacketsLost = creatVideoCounter(result, 'packetsLost', 'recv', '+');

@@ -4,17 +4,13 @@ function getStatsWrapper(cb) {
     // if !peer or peer.signalingState == 'closed' then return;
 
     if (typeof window.InstallTrigger !== 'undefined') {
-        peer.getStats(
-            mediaStreamTrack,
-            function(res) {
-                var items = [];
-                res.forEach(function(r) {
-                    items.push(r);
-                });
-                cb(items);
-            },
-            cb
-        );
+        peer.getStats(window.mediaStreamTrack || null).then(function(res) {
+            var items = [];
+            res.forEach(function(r) {
+                items.push(r);
+            });
+            cb(items);
+        }).catch(cb);
     } else {
         peer.getStats(function(res) {
             var items = [];

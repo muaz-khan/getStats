@@ -1,4 +1,4 @@
-<script>window.demoVersion = '2018.10.05';</script>
+<script>window.demoVersion = '2018.12.18';</script>
 
 <!--
 > Muaz Khan     - www.MuazKhan.com
@@ -113,6 +113,10 @@
                 text-align: right;
                 padding-right: 15px;
             }
+
+            tr {
+                display: none;
+            }
     </style>
 
     <script src="https://cdn.webrtc-experiment.com/getStats.js"></script>
@@ -154,6 +158,7 @@
             </select>
             <select id="select-iceTransportLimitation">
                 <option value="all">UDP+TCP</option>
+                <option value="udp">UDP Only</option>
                 <option value="tcp">TCP Only</option>
             </select>
             <select id="select-codec">
@@ -171,7 +176,7 @@
             </thead>
 
             <tbody>
-                <tr>
+                <tr class="firefox-allowed chrome-allowed">
                     <td>
                         Videos
                     </td>
@@ -183,13 +188,13 @@
                     </td>
                 </tr>
 
-                <tr>
+                <tr class="firefox-allowed chrome-allowed">
                     <td>Bandwidth Speed</td>
                     <td><span id="peer1-bandwidthSpeed"></span> per second</td>
                     <td><span id="peer2-bandwidthSpeed"></span> per second</td>
                 </tr>
 
-                <tr>
+                <tr class="firefox-allowed chrome-allowed">
                     <td>STUN/TURN?</td>
                     <td>
                         <label>Local:</label> <span id="peer1-localIceType"></span> (<span id="peer1-localTransport"></span>)<br>
@@ -201,7 +206,7 @@
                     </td>
                 </tr>
 
-                <tr>
+                <tr class="firefox-not-allowed chrome-allowed">
                     <td>Codecs</td>
                     <td>
                         <label>Send:</label> <span id="peer1-codecsSend"></span><br>
@@ -213,13 +218,13 @@
                     </td>
                 </tr>
 
-                <tr>
+                <tr class="firefox-not-allowed chrome-allowed">
                     <td>Encryption</td>
                     <td><span id="peer1-encryptedAs"></span></td>
                     <td><span id="peer2-encryptedAs"></span></td>
                 </tr>
 
-                <tr>
+                <tr class="firefox-allowed chrome-allowed">
                     <td>IP Address</td>
                     <td>
                         <label>Send:</label> <span id="peer1-externalIPAddressLocal"></span><br>
@@ -231,7 +236,7 @@
                     </td>
                 </tr>
 
-                <tr>
+                <tr class="firefox-not-allowed chrome-allowed">
                     <td>Resolutions</td>
                     <td>
                         <label>Send:</label> <span id="peer1-videoResolutionsForSenders"></span><br>
@@ -243,7 +248,7 @@
                     </td>
                 </tr>
 
-                <tr>
+                <tr class="firefox-allowed chrome-allowed">
                     <td>Data</td>
                     <td>
                         <label>Send:</label> <span id="peer1-totalDataForSenders"></span><br>
@@ -252,6 +257,26 @@
                     <td>
                         <label>Send:</label> <span id="peer2-totalDataForSenders"></span><br>
                         <label>Recv:</label> <span id="peer2-totalDataForReceivers"></span>
+                    </td>
+                </tr>
+
+                <tr class="firefox-allowed chrome-not-allowed">
+                    <td>framerateMean</td>
+                    <td>
+                        <label>Send:</label> <span id="peer1-framerateMean"></span>
+                    </td>
+                    <td>
+                        <label>Send:</label> <span id="peer2-framerateMean"></span>
+                    </td>
+                </tr>
+
+                <tr class="firefox-allowed chrome-not-allowed">
+                    <td>bitrateMean</td>
+                    <td>
+                        <label>Send:</label> <span id="peer1-bitrateMean"></span>
+                    </td>
+                    <td>
+                        <label>Send:</label> <span id="peer2-bitrateMean"></span>
                     </td>
                 </tr>
             </tbody>
@@ -296,6 +321,12 @@
                         }
                     }
 
+                    if(iceTransportLimitation.value === 'udp') {
+                        if(candidate.candidate.toLowerCase().indexOf('udp') === -1) {
+                            return; // ignore UDP
+                        }
+                    }
+
                     peer.addIceCandidate(candidate);
                 }
             </script>
@@ -334,16 +365,9 @@
 
                         offererToAnswerer.srcObject = event.streams[0];
 
-                        if (typeof window.InstallTrigger !== 'undefined') {
-                            getStats(offerer, event.streams[0].getTracks()[0], function(result) {
-                                previewGetStatsResult(offerer, result);
-                            }, 1000);
-                        }
-                        else {
-                            getStats(offerer, function(result) {
-                                previewGetStatsResult(offerer, result);
-                            }, 1000);
-                        }
+                        getStats(offerer, function(result) {
+                            previewGetStatsResult(offerer, result);
+                        }, 1000);
                     };
 
                     offerer.onicecandidate = function (event) {
@@ -377,16 +401,9 @@
 
                         answererToOfferer.srcObject = event.streams[0];
                         
-                        if (typeof window.InstallTrigger !== 'undefined') {
-                            getStats(answerer, event.streams[0].getTracks()[0], function(result) {
-                                previewGetStatsResult(answerer, result);
-                            }, 1000);
-                        }
-                        else {
-                            getStats(answerer, function(result) {
-                                previewGetStatsResult(answerer, result);
-                            }, 1000);
-                        }
+                        getStats(answerer, function(result) {
+                            previewGetStatsResult(answerer, result);
+                        }, 1000);
                     };
 
                     answerer.onicecandidate = function (event) {
@@ -483,11 +500,37 @@
 
                         document.getElementById('peer' + peer.idx + '-bandwidthSpeed').innerHTML = bytesToSize(result.bandwidth.speed);
 
+                        document.getElementById('peer' + peer.idx + '-framerateMean').innerHTML = bytesToSize(result.video.send.framerateMean);
+                        document.getElementById('peer' + peer.idx + '-bitrateMean').innerHTML = bytesToSize(result.video.send.bitrateMean);
+
                         if (result.ended === true) {
                             result.nomore();
                         }
 
                         window.getStatsResult = result;
+                }
+
+                if (typeof window.InstallTrigger !== 'undefined') {
+                    var all = document.querySelectorAll('.firefox-allowed');
+                    for(var i = 0; i < all.length; i++) {
+                        all[i].style.display = 'table-row';
+                    }
+
+                    var all = document.querySelectorAll('.firefox-not-allowed');
+                    for(var i = 0; i < all.length; i++) {
+                        all[i].style.display = 'none';
+                    }
+                }
+                else {
+                    var all = document.querySelectorAll('.chrome-allowed');
+                    for(var i = 0; i < all.length; i++) {
+                        all[i].style.display = 'table-row';
+                    }
+
+                    var all = document.querySelectorAll('.chrome-not-allowed');
+                    for(var i = 0; i < all.length; i++) {
+                        all[i].style.display = 'none';
+                    }
                 }
 
                 function bytesToSize(bytes) {

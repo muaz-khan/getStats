@@ -1,5 +1,5 @@
 getStatsParser.candidatePair = function(result) {
-    if (result.type !== 'googCandidatePair' && result.type !== 'candidate-pair') return;
+    if (result.type !== 'googCandidatePair' && result.type !== 'candidate-pair' && result.type !== 'local-candidate' && result.type !== 'remote-candidate') return;
 
     // result.googActiveConnection means either STUN or TURN is used.
 
@@ -50,5 +50,19 @@ getStatsParser.candidatePair = function(result) {
 
             // Firefox used above two pairs for connection
         }
+    }
+
+    if (result.type === 'local-candidate') {
+        getStatsResult.connectionType.local.candidateType = result.candidateType;
+        getStatsResult.connectionType.local.ipAddress = result.ipAddress;
+        getStatsResult.connectionType.local.networkType = result.networkType;
+        getStatsResult.connectionType.local.transport = result.mozLocalTransport || result.transport;
+    }
+
+    if (result.type === 'remote-candidate') {
+        getStatsResult.connectionType.remote.candidateType = result.candidateType;
+        getStatsResult.connectionType.remote.ipAddress = result.ipAddress;
+        getStatsResult.connectionType.remote.networkType = result.networkType;
+        getStatsResult.connectionType.remote.transport = result.mozRemoteTransport || result.transport;
     }
 };

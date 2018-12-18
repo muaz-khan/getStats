@@ -1,9 +1,9 @@
 'use strict';
 
-// Last time updated: 2017-11-19 4:49:44 AM UTC
+// Last time updated: 2018-12-18 1:02:11 PM UTC
 
 // _______________
-// getStats v1.0.6
+// getStats v1.0.7
 
 // Open-Sourced: https://github.com/muaz-khan/getStats
 
@@ -29,13 +29,17 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 tracks: [],
                 codecs: [],
                 availableBandwidth: 0,
-                streams: 0
+                streams: 0,
+                framerateMean: 0,
+                bitrateMean: 0
             },
             recv: {
                 tracks: [],
                 codecs: [],
                 availableBandwidth: 0,
-                streams: 0
+                streams: 0,
+                framerateMean: 0,
+                bitrateMean: 0
             },
             bytesSent: 0,
             bytesReceived: 0
@@ -45,13 +49,17 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
                 tracks: [],
                 codecs: [],
                 availableBandwidth: 0,
-                streams: 0
+                streams: 0,
+                framerateMean: 0,
+                bitrateMean: 0
             },
             recv: {
                 tracks: [],
                 codecs: [],
                 availableBandwidth: 0,
-                streams: 0
+                streams: 0,
+                framerateMean: 0,
+                bitrateMean: 0
             },
             bytesSent: 0,
             bytesReceived: 0
@@ -119,20 +127,18 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
     var peer = this;
 
-    if (arguments[0] instanceof RTCPeerConnection) {
-        peer = arguments[0];
+    if (!(arguments[0] instanceof RTCPeerConnection)) {
+        throw '1st argument is not instance of RTCPeerConnection.';
+    }
 
-        if (!!navigator.mozGetUserMedia) {
-            mediaStreamTrack = arguments[1];
-            callback = arguments[2];
-            interval = arguments[3];
-        }
+    peer = arguments[0];
 
-        if (!(mediaStreamTrack instanceof MediaStreamTrack) && !!navigator.mozGetUserMedia) {
-            throw '2nd argument is not instance of MediaStreamTrack.';
-        }
-    } else if (!(mediaStreamTrack instanceof MediaStreamTrack) && !!navigator.mozGetUserMedia) {
-        throw '1st argument is not instance of MediaStreamTrack.';
+    if (arguments[1] instanceof MediaStreamTrack) {
+        console.warn('Do not pass MediaStreamTrack on getStats. Otherwise it will return results for only that track.');
+
+        mediaStreamTrack = arguments[1]; // redundant
+        callback = arguments[2];
+        interval = arguments[3];
     }
 
     var nomore = false;
@@ -191,17 +197,13 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         // if !peer or peer.signalingState == 'closed' then return;
 
         if (typeof window.InstallTrigger !== 'undefined') {
-            peer.getStats(
-                mediaStreamTrack,
-                function(res) {
-                    var items = [];
-                    res.forEach(function(r) {
-                        items.push(r);
-                    });
-                    cb(items);
-                },
-                cb
-            );
+            peer.getStats(window.mediaStreamTrack || null).then(function(res) {
+                var items = [];
+                res.forEach(function(r) {
+                    items.push(r);
+                });
+                cb(items);
+            }).catch(cb);
         } else {
             peer.getStats(function(res) {
                 var items = [];
@@ -237,49 +239,52 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     var AUDIO_codecs = ['opus', 'isac', 'ilbc'];
 
     getStatsParser.checkAudioTracks = function(result) {
-        if (!result.googCodecName || result.mediaType !== 'audio') return;
-
-        if (AUDIO_codecs.indexOf(result.googCodecName.toLowerCase()) === -1) return;
+        if (result.mediaType !== 'audio') return;
 
         var sendrecvType = result.id.split('_').pop();
-
-        if (getStatsResult.audio[sendrecvType].codecs.indexOf(result.googCodecName) === -1) {
-            getStatsResult.audio[sendrecvType].codecs.push(result.googCodecName);
+        if (result.isRemote === true) {
+            sendrecvType = 'recv';
+        }
+        if (result.isRemote === false) {
+            sendrecvType = 'send';
         }
 
-        if (result.bytesSent) {
-            var kilobytes = 0;
-            if (!!result.bytesSent) {
-                if (!getStatsResult.internal.audio[sendrecvType].prevBytesSent) {
-                    getStatsResult.internal.audio[sendrecvType].prevBytesSent = result.bytesSent;
-                }
+        if (!sendrecvType) return;
 
-                var bytes = result.bytesSent - getStatsResult.internal.audio[sendrecvType].prevBytesSent;
+        if (getStatsResult.audio[sendrecvType].codecs.indexOf(result.googCodecName || 'opus') === -1) {
+            getStatsResult.audio[sendrecvType].codecs.push(result.googCodecName || 'opus');
+        }
+
+        if (!!result.bytesSent) {
+            var kilobytes = 0;
+            if (!getStatsResult.internal.audio[sendrecvType].prevBytesSent) {
                 getStatsResult.internal.audio[sendrecvType].prevBytesSent = result.bytesSent;
-
-                kilobytes = bytes / 1024;
             }
 
+            var bytes = result.bytesSent - getStatsResult.internal.audio[sendrecvType].prevBytesSent;
+            getStatsResult.internal.audio[sendrecvType].prevBytesSent = result.bytesSent;
+
+            kilobytes = bytes / 1024;
             getStatsResult.audio[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.video.bytesSent = kilobytes.toFixed(1);
         }
 
-        if (result.bytesReceived) {
+        if (!!result.bytesReceived) {
             var kilobytes = 0;
-            if (!!result.bytesReceived) {
-                if (!getStatsResult.internal.audio[sendrecvType].prevBytesReceived) {
-                    getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
-                }
-
-                var bytes = result.bytesReceived - getStatsResult.internal.audio[sendrecvType].prevBytesReceived;
+            if (!getStatsResult.internal.audio[sendrecvType].prevBytesReceived) {
                 getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
-
-                kilobytes = bytes / 1024;
             }
 
-            getStatsResult.audio[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            var bytes = result.bytesReceived - getStatsResult.internal.audio[sendrecvType].prevBytesReceived;
+            getStatsResult.internal.audio[sendrecvType].prevBytesReceived = result.bytesReceived;
+
+            kilobytes = bytes / 1024;
+
+            // getStatsResult.audio[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.video.bytesReceived = kilobytes.toFixed(1);
         }
 
-        if (getStatsResult.audio[sendrecvType].tracks.indexOf(result.googTrackId) === -1) {
+        if (result.googTrackId && getStatsResult.audio[sendrecvType].tracks.indexOf(result.googTrackId) === -1) {
             getStatsResult.audio[sendrecvType].tracks.push(result.googTrackId);
         }
     };
@@ -287,16 +292,20 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     var VIDEO_codecs = ['vp9', 'vp8', 'h264'];
 
     getStatsParser.checkVideoTracks = function(result) {
-        if (!result.googCodecName || result.mediaType !== 'video') return;
+        if (result.mediaType !== 'video') return;
 
-        if (VIDEO_codecs.indexOf(result.googCodecName.toLowerCase()) === -1) return;
-
-        // googCurrentDelayMs, googRenderDelayMs, googTargetDelayMs
-        // transportId === 'Channel-audio-1'
         var sendrecvType = result.id.split('_').pop();
+        if (result.isRemote === true) {
+            sendrecvType = 'recv';
+        }
+        if (result.isRemote === false) {
+            sendrecvType = 'send';
+        }
 
-        if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName) === -1) {
-            getStatsResult.video[sendrecvType].codecs.push(result.googCodecName);
+        if (!sendrecvType) return;
+
+        if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName || 'vp8') === -1) {
+            getStatsResult.video[sendrecvType].codecs.push(result.googCodecName || 'vp8');
         }
 
         if (!!result.bytesSent) {
@@ -309,6 +318,9 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
 
             kilobytes = bytes / 1024;
+
+            getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.video.bytesSent = kilobytes.toFixed(1);
         }
 
         if (!!result.bytesReceived) {
@@ -321,9 +333,9 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
 
             kilobytes = bytes / 1024;
+            // getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.video.bytesReceived = kilobytes.toFixed(1);
         }
-
-        getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
 
         if (result.googFrameHeightReceived && result.googFrameWidthReceived) {
             getStatsResult.resolutions[sendrecvType].width = result.googFrameWidthReceived;
@@ -335,8 +347,36 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             getStatsResult.resolutions[sendrecvType].height = result.googFrameHeightSent;
         }
 
-        if (getStatsResult.video[sendrecvType].tracks.indexOf(result.googTrackId) === -1) {
+        if (result.googTrackId && getStatsResult.video[sendrecvType].tracks.indexOf(result.googTrackId) === -1) {
             getStatsResult.video[sendrecvType].tracks.push(result.googTrackId);
+        }
+
+        if (result.framerateMean) {
+            getStatsResult.bandwidth.framerateMean = result.framerateMean;
+            var kilobytes = 0;
+            if (!getStatsResult.internal.video[sendrecvType].prevFramerateMean) {
+                getStatsResult.internal.video[sendrecvType].prevFramerateMean = result.bitrateMean;
+            }
+
+            var bytes = result.bytesSent - getStatsResult.internal.video[sendrecvType].prevFramerateMean;
+            getStatsResult.internal.video[sendrecvType].prevFramerateMean = result.framerateMean;
+
+            kilobytes = bytes / 1024;
+            getStatsResult.video[sendrecvType].framerateMean = bytes.toFixed(1);
+        }
+
+        if (result.bitrateMean) {
+            getStatsResult.bandwidth.bitrateMean = result.bitrateMean;
+            var kilobytes = 0;
+            if (!getStatsResult.internal.video[sendrecvType].prevBitrateMean) {
+                getStatsResult.internal.video[sendrecvType].prevBitrateMean = result.bitrateMean;
+            }
+
+            var bytes = result.bytesSent - getStatsResult.internal.video[sendrecvType].prevBitrateMean;
+            getStatsResult.internal.video[sendrecvType].prevBitrateMean = result.bitrateMean;
+
+            kilobytes = bytes / 1024;
+            getStatsResult.video[sendrecvType].bitrateMean = bytes.toFixed(1);
         }
     };
 
@@ -355,7 +395,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     };
 
     getStatsParser.candidatePair = function(result) {
-        if (result.type !== 'googCandidatePair' && result.type !== 'candidate-pair') return;
+        if (result.type !== 'googCandidatePair' && result.type !== 'candidate-pair' && result.type !== 'local-candidate' && result.type !== 'remote-candidate') return;
 
         // result.googActiveConnection means either STUN or TURN is used.
 
@@ -406,6 +446,20 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
                 // Firefox used above two pairs for connection
             }
+        }
+
+        if (result.type === 'local-candidate') {
+            getStatsResult.connectionType.local.candidateType = result.candidateType;
+            getStatsResult.connectionType.local.ipAddress = result.ipAddress;
+            getStatsResult.connectionType.local.networkType = result.networkType;
+            getStatsResult.connectionType.local.transport = result.mozLocalTransport || result.transport;
+        }
+
+        if (result.type === 'remote-candidate') {
+            getStatsResult.connectionType.remote.candidateType = result.candidateType;
+            getStatsResult.connectionType.remote.ipAddress = result.ipAddress;
+            getStatsResult.connectionType.remote.networkType = result.networkType;
+            getStatsResult.connectionType.remote.transport = result.mozRemoteTransport || result.transport;
         }
     };
 

@@ -1,9 +1,9 @@
 'use strict';
 
-// Last time updated: 2018-12-18 1:02:11 PM UTC
+// Last time updated: 2018-12-19 9:53:31 AM UTC
 
 // _______________
-// getStats v1.0.7
+// getStats v1.0.8
 
 // Open-Sourced: https://github.com/muaz-khan/getStats
 
@@ -125,6 +125,8 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }
     };
 
+    var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
     var peer = this;
 
     if (!(arguments[0] instanceof RTCPeerConnection)) {
@@ -134,9 +136,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     peer = arguments[0];
 
     if (arguments[1] instanceof MediaStreamTrack) {
-        console.warn('Do not pass MediaStreamTrack on getStats. Otherwise it will return results for only that track.');
-
-        mediaStreamTrack = arguments[1]; // redundant
+        mediaStreamTrack = arguments[1]; // redundant on non-safari
         callback = arguments[2];
         interval = arguments[3];
     }
@@ -145,10 +145,16 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
     function getStatsLooper() {
         getStatsWrapper(function(results) {
+            if (!results || !results.forEach) return;
+
             results.forEach(function(result) {
                 Object.keys(getStatsParser).forEach(function(key) {
                     if (typeof getStatsParser[key] === 'function') {
-                        getStatsParser[key](result);
+                        try {
+                            getStatsParser[key](result);
+                        } catch (e) {
+                            console.error(e.message, e.stack);
+                        }
                     }
                 });
 
@@ -196,7 +202,7 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     function getStatsWrapper(cb) {
         // if !peer or peer.signalingState == 'closed' then return;
 
-        if (typeof window.InstallTrigger !== 'undefined') {
+        if (typeof window.InstallTrigger !== 'undefined' || isSafari) { // maybe "isEdge?"
             peer.getStats(window.mediaStreamTrack || null).then(function(res) {
                 var items = [];
                 res.forEach(function(r) {
@@ -234,9 +240,16 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         if (result.type == 'googCertificate') {
             getStatsResult.encryption = result.googFingerprintAlgorithm;
         }
-    };
 
-    var AUDIO_codecs = ['opus', 'isac', 'ilbc'];
+        // Safari-11 or higher
+        if (result.type == 'certificate') {
+            // todo: is it possible to have different encryption methods for senders and receivers?
+            // if yes, then we need to set:
+            //    getStatsResult.encryption.local = value;
+            //    getStatsResult.encryption.remote = value;
+            getStatsResult.encryption = result.fingerprintAlgorithm;
+        }
+    };
 
     getStatsParser.checkAudioTracks = function(result) {
         if (result.mediaType !== 'audio') return;
@@ -289,8 +302,6 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         }
     };
 
-    var VIDEO_codecs = ['vp9', 'vp8', 'h264'];
-
     getStatsParser.checkVideoTracks = function(result) {
         if (result.mediaType !== 'video') return;
 
@@ -304,8 +315,8 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
 
         if (!sendrecvType) return;
 
-        if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName || 'vp8') === -1) {
-            getStatsResult.video[sendrecvType].codecs.push(result.googCodecName || 'vp8');
+        if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName || 'VP8') === -1) {
+            getStatsResult.video[sendrecvType].codecs.push(result.googCodecName || 'VP8');
         }
 
         if (!!result.bytesSent) {
@@ -461,6 +472,71 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
             getStatsResult.connectionType.remote.networkType = result.networkType;
             getStatsResult.connectionType.remote.transport = result.mozRemoteTransport || result.transport;
         }
+
+        if (isSafari) {
+            // result.remoteCandidateId
+            // todo: below line will always force "send" on Safari; find a solution
+            var sendrecvType = result.localCandidateId ? 'send' : 'recv';
+
+            if (!sendrecvType) return;
+
+            if (!!result.bytesSent) {
+                var kilobytes = 0;
+                if (!getStatsResult.internal.video[sendrecvType].prevBytesSent) {
+                    getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
+                }
+
+                var bytes = result.bytesSent - getStatsResult.internal.video[sendrecvType].prevBytesSent;
+                getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
+
+                kilobytes = bytes / 1024;
+
+                getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+                getStatsResult.video.bytesSent = kilobytes.toFixed(1);
+            }
+
+            if (!!result.bytesReceived) {
+                var kilobytes = 0;
+                if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived) {
+                    getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
+                }
+
+                var bytes = result.bytesReceived - getStatsResult.internal.video[sendrecvType].prevBytesReceived;
+                getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
+
+                kilobytes = bytes / 1024;
+                // getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+                getStatsResult.video.bytesReceived = kilobytes.toFixed(1);
+            }
+
+            if (!!result.availableOutgoingBitrate) {
+                var kilobytes = 0;
+                if (!getStatsResult.internal.video[sendrecvType].prevAvailableOutgoingBitrate) {
+                    getStatsResult.internal.video[sendrecvType].prevAvailableOutgoingBitrate = result.availableOutgoingBitrate;
+                }
+
+                var bytes = result.availableOutgoingBitrate - getStatsResult.internal.video[sendrecvType].prevAvailableOutgoingBitrate;
+                getStatsResult.internal.video[sendrecvType].prevAvailableOutgoingBitrate = result.availableOutgoingBitrate;
+
+                kilobytes = bytes / 1024;
+                // getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+                getStatsResult.video.availableOutgoingBitrate = kilobytes.toFixed(1);
+            }
+
+            if (!!result.availableIncomingBitrate) {
+                var kilobytes = 0;
+                if (!getStatsResult.internal.video[sendrecvType].prevAvailableIncomingBitrate) {
+                    getStatsResult.internal.video[sendrecvType].prevAvailableIncomingBitrate = result.availableIncomingBitrate;
+                }
+
+                var bytes = result.availableIncomingBitrate - getStatsResult.internal.video[sendrecvType].prevAvailableIncomingBitrate;
+                getStatsResult.internal.video[sendrecvType].prevAvailableIncomingBitrate = result.availableIncomingBitrate;
+
+                kilobytes = bytes / 1024;
+                // getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+                getStatsResult.video.availableIncomingBitrate = kilobytes.toFixed(1);
+            }
+        }
     };
 
     var LOCAL_candidateType = {};
@@ -591,6 +667,98 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
         if (!!result.bytesReceived) {
             getStatsResult[result.mediaType].bytesReceived = parseInt(result.bytesReceived);
         }
+    };
+
+    getStatsParser.inboundrtp = function(result) {
+        if (!isSafari) return;
+        if (result.type !== 'inbound-rtp') return;
+
+        var mediaType = result.mediaType || 'audio';
+        var sendrecvType = result.isRemote ? 'recv' : 'send';
+
+        if (!sendrecvType) return;
+
+        if (!!result.bytesSent) {
+            var kilobytes = 0;
+            if (!getStatsResult.internal[mediaType][sendrecvType].prevBytesSent) {
+                getStatsResult.internal[mediaType][sendrecvType].prevBytesSent = result.bytesSent;
+            }
+
+            var bytes = result.bytesSent - getStatsResult.internal[mediaType][sendrecvType].prevBytesSent;
+            getStatsResult.internal[mediaType][sendrecvType].prevBytesSent = result.bytesSent;
+
+            kilobytes = bytes / 1024;
+
+            getStatsResult[mediaType][sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult[mediaType].bytesSent = kilobytes.toFixed(1);
+        }
+
+        if (!!result.bytesReceived) {
+            var kilobytes = 0;
+            if (!getStatsResult.internal[mediaType][sendrecvType].prevBytesReceived) {
+                getStatsResult.internal[mediaType][sendrecvType].prevBytesReceived = result.bytesReceived;
+            }
+
+            var bytes = result.bytesReceived - getStatsResult.internal[mediaType][sendrecvType].prevBytesReceived;
+            getStatsResult.internal[mediaType][sendrecvType].prevBytesReceived = result.bytesReceived;
+
+            kilobytes = bytes / 1024;
+            // getStatsResult[mediaType][sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult[mediaType].bytesReceived = kilobytes.toFixed(1);
+        }
+    };
+
+    getStatsParser.outboundrtp = function(result) {
+        if (!isSafari) return;
+        if (result.type !== 'outbound-rtp') return;
+
+        var mediaType = result.mediaType || 'audio';
+        var sendrecvType = result.isRemote ? 'recv' : 'send';
+
+        if (!sendrecvType) return;
+
+        if (!!result.bytesSent) {
+            var kilobytes = 0;
+            if (!getStatsResult.internal[mediaType][sendrecvType].prevBytesSent) {
+                getStatsResult.internal[mediaType][sendrecvType].prevBytesSent = result.bytesSent;
+            }
+
+            var bytes = result.bytesSent - getStatsResult.internal[mediaType][sendrecvType].prevBytesSent;
+            getStatsResult.internal[mediaType][sendrecvType].prevBytesSent = result.bytesSent;
+
+            kilobytes = bytes / 1024;
+
+            getStatsResult[mediaType][sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult[mediaType].bytesSent = kilobytes.toFixed(1);
+        }
+
+        if (!!result.bytesReceived) {
+            var kilobytes = 0;
+            if (!getStatsResult.internal[mediaType][sendrecvType].prevBytesReceived) {
+                getStatsResult.internal[mediaType][sendrecvType].prevBytesReceived = result.bytesReceived;
+            }
+
+            var bytes = result.bytesReceived - getStatsResult.internal[mediaType][sendrecvType].prevBytesReceived;
+            getStatsResult.internal[mediaType][sendrecvType].prevBytesReceived = result.bytesReceived;
+
+            kilobytes = bytes / 1024;
+            // getStatsResult[mediaType][sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult[mediaType].bytesReceived = kilobytes.toFixed(1);
+        }
+    };
+
+    getStatsParser.track = function(result) {
+        if (!isSafari) return;
+        if (result.type !== 'track') return;
+
+        var sendrecvType = result.remoteSource === true ? 'send' : 'recv';
+
+        if (result.frameWidth && result.frameHeight) {
+            getStatsResult.resolutions[sendrecvType].width = result.frameWidth;
+            getStatsResult.resolutions[sendrecvType].height = result.frameHeight;
+        }
+
+        // framesSent, framesReceived
     };
 
     var SSRC = {

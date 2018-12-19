@@ -1,4 +1,4 @@
-<script>window.demoVersion = '2018.12.18';</script>
+<script>window.demoVersion = '2018.12.19';</script>
 
 <!--
 > Muaz Khan     - www.MuazKhan.com
@@ -122,7 +122,7 @@
     <script src="https://cdn.webrtc-experiment.com/getStats.js"></script>
     <script src="https://cdn.webrtc-experiment.com/IceServersHandler.js"></script>
 
-    <!-- for Edige/FF/Chrome/Opera/etc. getUserMedia support -->
+    <!-- for Edge/FF/Chrome/Opera/etc. getUserMedia support -->
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 </head>
 
@@ -365,6 +365,13 @@
 
                         offererToAnswerer.srcObject = event.streams[0];
 
+                        if(/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+                            getStats(offerer, event.streams[0].getTracks()[0], function(result) {
+                                previewGetStatsResult(offerer, result);
+                            }, 1000);
+                            return;
+                        }
+
                         getStats(offerer, function(result) {
                             previewGetStatsResult(offerer, result);
                         }, 1000);
@@ -400,6 +407,13 @@
                         firedOnce = true;
 
                         answererToOfferer.srcObject = event.streams[0];
+
+                        if(/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
+                            getStats(offerer, event.streams[0].getTracks()[0], function(result) {
+                                previewGetStatsResult(offerer, result);
+                            }, 1000);
+                            return;
+                        }
                         
                         getStats(answerer, function(result) {
                             previewGetStatsResult(answerer, result);

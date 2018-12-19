@@ -1,5 +1,3 @@
-var VIDEO_codecs = ['vp9', 'vp8', 'h264'];
-
 getStatsParser.checkVideoTracks = function(result) {
     if (result.mediaType !== 'video') return;
 
@@ -13,8 +11,8 @@ getStatsParser.checkVideoTracks = function(result) {
 
     if (!sendrecvType) return;
 
-    if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName || 'vp8') === -1) {
-        getStatsResult.video[sendrecvType].codecs.push(result.googCodecName || 'vp8');
+    if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName || 'VP8') === -1) {
+        getStatsResult.video[sendrecvType].codecs.push(result.googCodecName || 'VP8');
     }
 
     if (!!result.bytesSent) {

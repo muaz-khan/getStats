@@ -1,5 +1,3 @@
-var AUDIO_codecs = ['opus', 'isac', 'ilbc'];
-
 getStatsParser.checkAudioTracks = function(result) {
     if (result.mediaType !== 'audio') return;
 

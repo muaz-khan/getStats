@@ -7,9 +7,7 @@ if (!(arguments[0] instanceof RTCPeerConnection)) {
 peer = arguments[0];
 
 if (arguments[1] instanceof MediaStreamTrack) {
-    console.warn('Do not pass MediaStreamTrack on getStats. Otherwise it will return results for only that track.');
-
-    mediaStreamTrack = arguments[1]; // redundant
+    mediaStreamTrack = arguments[1]; // redundant on non-safari
     callback = arguments[2];
     interval = arguments[3];
 }

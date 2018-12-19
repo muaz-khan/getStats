@@ -65,4 +65,69 @@ getStatsParser.candidatePair = function(result) {
         getStatsResult.connectionType.remote.networkType = result.networkType;
         getStatsResult.connectionType.remote.transport = result.mozRemoteTransport || result.transport;
     }
+
+    if (isSafari) {
+        // result.remoteCandidateId
+        // todo: below line will always force "send" on Safari; find a solution
+        var sendrecvType = result.localCandidateId ? 'send' : 'recv';
+
+        if (!sendrecvType) return;
+
+        if (!!result.bytesSent) {
+            var kilobytes = 0;
+            if (!getStatsResult.internal.video[sendrecvType].prevBytesSent) {
+                getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
+            }
+
+            var bytes = result.bytesSent - getStatsResult.internal.video[sendrecvType].prevBytesSent;
+            getStatsResult.internal.video[sendrecvType].prevBytesSent = result.bytesSent;
+
+            kilobytes = bytes / 1024;
+
+            getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.video.bytesSent = kilobytes.toFixed(1);
+        }
+
+        if (!!result.bytesReceived) {
+            var kilobytes = 0;
+            if (!getStatsResult.internal.video[sendrecvType].prevBytesReceived) {
+                getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
+            }
+
+            var bytes = result.bytesReceived - getStatsResult.internal.video[sendrecvType].prevBytesReceived;
+            getStatsResult.internal.video[sendrecvType].prevBytesReceived = result.bytesReceived;
+
+            kilobytes = bytes / 1024;
+            // getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.video.bytesReceived = kilobytes.toFixed(1);
+        }
+
+        if (!!result.availableOutgoingBitrate) {
+            var kilobytes = 0;
+            if (!getStatsResult.internal.video[sendrecvType].prevAvailableOutgoingBitrate) {
+                getStatsResult.internal.video[sendrecvType].prevAvailableOutgoingBitrate = result.availableOutgoingBitrate;
+            }
+
+            var bytes = result.availableOutgoingBitrate - getStatsResult.internal.video[sendrecvType].prevAvailableOutgoingBitrate;
+            getStatsResult.internal.video[sendrecvType].prevAvailableOutgoingBitrate = result.availableOutgoingBitrate;
+
+            kilobytes = bytes / 1024;
+            // getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.video.availableOutgoingBitrate = kilobytes.toFixed(1);
+        }
+
+        if (!!result.availableIncomingBitrate) {
+            var kilobytes = 0;
+            if (!getStatsResult.internal.video[sendrecvType].prevAvailableIncomingBitrate) {
+                getStatsResult.internal.video[sendrecvType].prevAvailableIncomingBitrate = result.availableIncomingBitrate;
+            }
+
+            var bytes = result.availableIncomingBitrate - getStatsResult.internal.video[sendrecvType].prevAvailableIncomingBitrate;
+            getStatsResult.internal.video[sendrecvType].prevAvailableIncomingBitrate = result.availableIncomingBitrate;
+
+            kilobytes = bytes / 1024;
+            // getStatsResult.video[sendrecvType].availableBandwidth = kilobytes.toFixed(1);
+            getStatsResult.video.availableIncomingBitrate = kilobytes.toFixed(1);
+        }
+    }
 };

@@ -49,6 +49,9 @@ module.exports = function(grunt) {
                     'dev/local-candidate.js',
                     'dev/remote-candidate.js',
                     'dev/dataSentReceived.js',
+                    'dev/inbound-rtp.js',
+                    'dev/outbound-rtp.js',
+                    'dev/track.js',
                     'dev/ssrc.js',
                     'dev/tail.js'
                 ],

@@ -3,7 +3,7 @@
 function getStatsWrapper(cb) {
     // if !peer or peer.signalingState == 'closed' then return;
 
-    if (typeof window.InstallTrigger !== 'undefined') {
+    if (typeof window.InstallTrigger !== 'undefined' || isSafari) { // maybe "isEdge?"
         peer.getStats(window.mediaStreamTrack || null).then(function(res) {
             var items = [];
             res.forEach(function(r) {

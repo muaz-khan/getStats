@@ -104,6 +104,7 @@ getStatsParser.checkVideoTracks = function(result) {
     }
 
     // calculate packetsLost
+    if (!!result.packetsLost) {
         var kilobytes = 0;
         if (!getStatsResult.internal.video.prevPacketsLost) {
             getStatsResult.internal.video.prevPacketsLost = result.packetsLost;

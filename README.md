@@ -46,14 +46,6 @@ Or link specific build:
 
 * https://github.com/muaz-khan/getStats/releases
 
-# `window.getStats`
-
-To invoke directly:
-
-```javascript
-getStats(peer, callback, interval);
-```
-
 # Usage
 
 ```javascript
@@ -469,6 +461,12 @@ getStatsResult.results.forEach(function(item) {
     "timestamp": "2017-11-21T04:10:10.905Z"
 }]
 ```
+
+# Disclaimer
+
+There is no warranty, expressed or implied, associated with this product. Use at your own risk.
+
+* https://www.webrtc-experiment.com/disclaimer/
 
 ## License
 

@@ -46,6 +46,13 @@ Or link specific build:
 
 * https://github.com/muaz-khan/getStats/releases
 
+Or:
+
+```javascript
+const getStats = require('getstats');
+import { getStats} from 'getstats';
+```
+
 # Usage
 
 ```javascript
@@ -470,4 +477,4 @@ There is no warranty, expressed or implied, associated with this product. Use at
 
 ## License
 
-[getStats.js](https://github.com/muaz-khan/getStats) is released under [MIT licence](https://www.webrtc-experiment.com/licence/) . Copyright (c) [Muaz Khan](http://www.MuazKhan.com/).
+[getStats.js](https://github.com/muaz-khan/getStats) is released under [MIT licence](https://github.com/muaz-khan/getStats/blob/master/LICENSE.md) . Copyright (c) [Muaz Khan](https://MuazKhan.com/).

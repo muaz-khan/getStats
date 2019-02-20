@@ -1,1 +1,1 @@
-window.getStats = function(mediaStreamTrack, callback, interval) {
+var getStats = function(mediaStreamTrack, callback, interval) {

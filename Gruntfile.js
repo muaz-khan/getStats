@@ -36,6 +36,7 @@ module.exports = function(grunt) {
             dist: {
                 src: [
                     'dev/head.js',
+                    'dev/amd.js',
                     'dev/globals.js',
                     'dev/parameters.js',
                     'dev/getStats.js',

@@ -1,9 +1,9 @@
 'use strict';
 
-// Last time updated: 2018-12-20 6:58:08 AM UTC
+// Last time updated: 2019-02-20 3:31:29 PM UTC
 
 // _______________
-// getStats v1.0.9
+// getStats v1.2.0
 
 // Open-Sourced: https://github.com/muaz-khan/getStats
 
@@ -12,7 +12,108 @@
 // MIT License   - www.WebRTC-Experiment.com/licence
 // --------------------------------------------------
 
-window.getStats = function(mediaStreamTrack, callback, interval) {
+var getStats = function(mediaStreamTrack, callback, interval) {
+
+    var browserFakeUserAgent = 'Fake/5.0 (FakeOS) AppleWebKit/123 (KHTML, like Gecko) Fake/12.3.4567.89 Fake/123.45';
+
+    (function(that) {
+        if (!that) {
+            return;
+        }
+
+        if (typeof window !== 'undefined') {
+            return;
+        }
+
+        if (typeof global === 'undefined') {
+            return;
+        }
+
+        global.navigator = {
+            userAgent: browserFakeUserAgent,
+            getUserMedia: function() {}
+        };
+
+        if (!global.console) {
+            global.console = {};
+        }
+
+        if (typeof global.console.log === 'undefined' || typeof global.console.error === 'undefined') {
+            global.console.error = global.console.log = global.console.log || function() {
+                console.log(arguments);
+            };
+        }
+
+        if (typeof document === 'undefined') {
+            /*global document:true */
+            that.document = {
+                documentElement: {
+                    appendChild: function() {
+                        return '';
+                    }
+                }
+            };
+
+            document.createElement = document.captureStream = document.mozCaptureStream = function() {
+                var obj = {
+                    getContext: function() {
+                        return obj;
+                    },
+                    play: function() {},
+                    pause: function() {},
+                    drawImage: function() {},
+                    toDataURL: function() {
+                        return '';
+                    }
+                };
+                return obj;
+            };
+
+            that.HTMLVideoElement = function() {};
+        }
+
+        if (typeof location === 'undefined') {
+            /*global location:true */
+            that.location = {
+                protocol: 'file:',
+                href: '',
+                hash: ''
+            };
+        }
+
+        if (typeof screen === 'undefined') {
+            /*global screen:true */
+            that.screen = {
+                width: 0,
+                height: 0
+            };
+        }
+
+        if (typeof URL === 'undefined') {
+            /*global screen:true */
+            that.URL = {
+                createObjectURL: function() {
+                    return '';
+                },
+                revokeObjectURL: function() {
+                    return '';
+                }
+            };
+        }
+
+        if (typeof MediaStreamTrack === 'undefined') {
+            /*global screen:true */
+            that.MediaStreamTrack = function() {};
+        }
+
+        if (typeof RTCPeerConnection === 'undefined') {
+            /*global screen:true */
+            that.RTCPeerConnection = function() {};
+        }
+
+        /*global window:true */
+        that.window = global;
+    })(typeof global !== 'undefined' ? global : null);
 
     var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
 
@@ -855,3 +956,13 @@ window.getStats = function(mediaStreamTrack, callback, interval) {
     getStatsLooper();
 
 };
+
+if (typeof module !== 'undefined' /* && !!module.exports*/ ) {
+    module.exports = getStats;
+}
+
+if (typeof define === 'function' && define.amd) {
+    define('getStats', [], function() {
+        return getStats;
+    });
+}

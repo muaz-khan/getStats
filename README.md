@@ -50,7 +50,7 @@ Or:
 
 ```javascript
 const getStats = require('getstats');
-import { getStats} from 'getstats';
+import getStats from 'getstats';
 ```
 
 # Usage

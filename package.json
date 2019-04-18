@@ -12,6 +12,7 @@
     "start": "node server.js"
   },
   "main": "./getStats.js",
+  "types": "./getStats.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/muaz-khan/getStats.git"

@@ -31,9 +31,6 @@ To use it:
 
 ```html
 <script src="https://www.webrtc-experiment.com/getStats.js"></script>
-
-<!-- or rawgit -->
-<script src="https://rawgit.com/muaz-khan/getStats/master/getStats.js"></script>
 ```
 
 Or link specific build:

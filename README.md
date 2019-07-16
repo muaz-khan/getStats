@@ -8,7 +8,7 @@ A tiny JavaScript library using [WebRTC getStats API](http://dev.w3.org/2011/web
 
 It is <a href="https://www.webrtc-experiment.com/licence/">MIT Licenced</a>, which means that you can use it in any commercial/non-commercial product, free of cost.
 
-![getStats](https://cdn.webrtc-experiment.com/images/getStats.png)
+![getStats](https://www.webrtc-experiment.com/images/getStats.png)
 
 ```
 npm install getstats
@@ -30,12 +30,6 @@ To use it:
 # Link the library
 
 ```html
-<script src="https://cdn.webrtc-experiment.com/getStats.js"></script>
-
-<!-- or min.js -->
-<script src="https://cdn.webrtc-experiment.com/getStats.min.js"></script>
-
-<!-- or without CDN -->
 <script src="https://www.webrtc-experiment.com/getStats.js"></script>
 
 <!-- or rawgit -->

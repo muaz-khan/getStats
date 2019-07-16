@@ -469,12 +469,6 @@ getStatsResult.results.forEach(function(item) {
 }]
 ```
 
-# Disclaimer
-
-There is no warranty, expressed or implied, associated with this product. Use at your own risk.
-
-* https://www.webrtc-experiment.com/disclaimer/
-
 ## License
 
 [getStats.js](https://github.com/muaz-khan/getStats) is released under [MIT licence](https://github.com/muaz-khan/getStats/blob/master/LICENSE.md) . Copyright (c) [Muaz Khan](https://MuazKhan.com/).

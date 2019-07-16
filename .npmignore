@@ -3,6 +3,7 @@
 
 # but not these files...
 !getStats.js
+!getStats.d.ts
 !getStats.min.js
 !index.html
 !package.json

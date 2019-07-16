@@ -24,13 +24,17 @@ declare module 'getstats' {
     codecs: string[];
     availableBandwidth: string;
     streams: number;
+    framerateMean: number;
+    bitrateMean: number;
   }
 
   interface GetStatsConnectionStream {
     send: GetStatsConnectionInfo;
     recv: GetStatsConnectionInfo;
-    bytesSend: number;
+    bytesSent: number;
     bytesReceived: number;
+    latency: number;
+    packetsLost: number;
   }
 
   interface GetStatsNetworkInfo {
@@ -58,7 +62,7 @@ declare module 'getstats' {
     recv: GetStatsResolution;
   }
 
-  interface GetStatsResult {
+  export interface GetStatsResult {
     datachannel: {
       state: 'open' | 'close';
     };
@@ -74,10 +78,9 @@ declare module 'getstats' {
     nomore: () => void;
   }
 
-  function getstats(
-    rtc: RTCPeerConnection,
-    callback: (result: GetStatsResult) => void,
+  export default function getstats(
+      rtc: RTCPeerConnection,
+      callback: (result: GetStatsResult) => void,
+      interval?: number
   ): void;
-
-  export = getstats;
 }

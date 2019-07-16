@@ -9,6 +9,7 @@ bower_components
 .npmrc
 .lock-wscript
 .svn
+.idea
 .wafpickle-*
 config.gypi
 CVS

@@ -9,7 +9,7 @@ getStatsParser.checkVideoTracks = function(result) {
         sendrecvType = 'send';
     }
 
-    if (!sendrecvType) return;
+    if (!sendrecvType || !getStatsResult.video[sendrecvType]) return;
 
     if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName || 'VP8') === -1) {
         getStatsResult.video[sendrecvType].codecs.push(result.googCodecName || 'VP8');

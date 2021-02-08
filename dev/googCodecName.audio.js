@@ -9,7 +9,7 @@ getStatsParser.checkAudioTracks = function(result) {
         sendrecvType = 'send';
     }
 
-    if (!sendrecvType) return;
+    if (!sendrecvType || !getStatsResult.audio[sendrecvType]) return;
 
     if (getStatsResult.audio[sendrecvType].codecs.indexOf(result.googCodecName || 'opus') === -1) {
         getStatsResult.audio[sendrecvType].codecs.push(result.googCodecName || 'opus');

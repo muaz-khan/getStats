@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2019-02-20 3:31:29 PM UTC
+// Last time updated: 2021-02-08 6:57:37 PM UTC
 
 // _______________
 // getStats v1.2.0
@@ -363,7 +363,7 @@ var getStats = function(mediaStreamTrack, callback, interval) {
             sendrecvType = 'send';
         }
 
-        if (!sendrecvType) return;
+        if (!sendrecvType || !getStatsResult.audio[sendrecvType]) return;
 
         if (getStatsResult.audio[sendrecvType].codecs.indexOf(result.googCodecName || 'opus') === -1) {
             getStatsResult.audio[sendrecvType].codecs.push(result.googCodecName || 'opus');
@@ -448,7 +448,7 @@ var getStats = function(mediaStreamTrack, callback, interval) {
             sendrecvType = 'send';
         }
 
-        if (!sendrecvType) return;
+        if (!sendrecvType || !getStatsResult.video[sendrecvType]) return;
 
         if (getStatsResult.video[sendrecvType].codecs.indexOf(result.googCodecName || 'VP8') === -1) {
             getStatsResult.video[sendrecvType].codecs.push(result.googCodecName || 'VP8');

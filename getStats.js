@@ -1,6 +1,6 @@
 'use strict';
 
-// Last time updated: 2019-02-20 3:31:29 PM UTC
+// Last time updated: 2021-11-22 2:06:32 PM UTC
 
 // _______________
 // getStats v1.2.0
@@ -215,7 +215,23 @@ var getStats = function(mediaStreamTrack, callback, interval) {
                 send: {},
                 recv: {}
             },
-            candidates: {}
+            candidates: {},
+            getSendrecvType: function(result) {
+                var sendrecvType = result.id.split('_').pop();
+                if ('isRemote' in result) {
+                    if (result.isRemote === true) {
+                        sendrecvType = 'recv';
+                    }
+                    if (result.isRemote === false) {
+                        sendrecvType = 'send';
+                    }
+                } else {
+                    var direction = result.type.split('-')[0];
+                    sendrecvType = direction === 'outbound' ? 'send' : (direction === 'inbound' ? 'recv' : null);
+                }
+
+                return sendrecvType;
+            },
         },
         nomore: function() {
             nomore = true;
@@ -355,13 +371,7 @@ var getStats = function(mediaStreamTrack, callback, interval) {
     getStatsParser.checkAudioTracks = function(result) {
         if (result.mediaType !== 'audio') return;
 
-        var sendrecvType = result.id.split('_').pop();
-        if (result.isRemote === true) {
-            sendrecvType = 'recv';
-        }
-        if (result.isRemote === false) {
-            sendrecvType = 'send';
-        }
+        var sendrecvType = getStatsResult.internal.getSendrecvType(result);
 
         if (!sendrecvType) return;
 
@@ -440,13 +450,7 @@ var getStats = function(mediaStreamTrack, callback, interval) {
     getStatsParser.checkVideoTracks = function(result) {
         if (result.mediaType !== 'video') return;
 
-        var sendrecvType = result.id.split('_').pop();
-        if (result.isRemote === true) {
-            sendrecvType = 'recv';
-        }
-        if (result.isRemote === false) {
-            sendrecvType = 'send';
-        }
+        var sendrecvType = getStatsResult.internal.getSendrecvType(result);
 
         if (!sendrecvType) return;
 

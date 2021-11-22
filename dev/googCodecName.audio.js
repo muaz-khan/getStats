@@ -1,13 +1,7 @@
 getStatsParser.checkAudioTracks = function(result) {
     if (result.mediaType !== 'audio') return;
 
-    var sendrecvType = result.id.split('_').pop();
-    if (result.isRemote === true) {
-        sendrecvType = 'recv';
-    }
-    if (result.isRemote === false) {
-        sendrecvType = 'send';
-    }
+    var sendrecvType = getStatsResult.internal.getSendrecvType(result);
 
     if (!sendrecvType) return;
 
